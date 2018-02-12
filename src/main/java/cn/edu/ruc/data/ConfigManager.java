@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigManager {
-	private static Properties properties = null;
+	private Properties properties = null;
 
 	public ConfigManager(String file){
 		properties = new Properties();

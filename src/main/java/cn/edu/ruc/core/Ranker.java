@@ -58,14 +58,8 @@ public class Ranker {
 	}
 
 	//get relevant entity list of an entity, where the entities should not necessarily connect with this feature
-	private static List<Entity> getRelevantEntityList(Entity queryEntity, boolean isConstraint) {
-		Set<Integer> targetEntitySet;
-
-		if(isConstraint) {
-			targetEntitySet = DataUtil.getEntitySet(queryEntity.getId());
-		} else {
-			targetEntitySet = DataUtil.getEntitySet();
-		}
+	private static List<Entity> getRelevantEntityList(Entity queryEntity, boolean isConnected) {
+		Set<Integer> targetEntitySet = isConnected ? DataUtil.getEntitySet(queryEntity.getId()) : DataUtil.getEntitySet();
 
 		return targetEntitySet.parallelStream()
 					.map(targetEntityId -> {
@@ -78,14 +72,8 @@ public class Ranker {
 	}
 
 	//get relevant entity list of a feature, where the entities should connect with this feature
-	private static List<Entity> getRelevantEntityList(Feature queryFeature, boolean isConstraint){
-		Set<Integer> targetEntitySet;
-
-		if(isConstraint) {
-			targetEntitySet = DataUtil.getEntitySet(queryFeature.getEntity().getId(), queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection());
-		} else {
-			targetEntitySet = DataUtil.getEntitySet();
-		}
+	private static List<Entity> getRelevantEntityList(Feature queryFeature, boolean isConnected){
+		Set<Integer> targetEntitySet = isConnected ? DataUtil.getEntitySet(queryFeature.getEntity().getId(), queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection()) : DataUtil.getEntitySet();
 
 		return targetEntitySet.parallelStream()
 				.map(targetEntityId -> {

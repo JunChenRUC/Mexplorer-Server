@@ -22,34 +22,39 @@ public class SearchServiceImp implements SearchService {
 	}
 
 	@Override
-	public Query getQuery(List<String> entityStringList, List<String> featureStringList) {
-		List<Entity> entityList = new ArrayList<>();
+	public Query getQuery(List<String> queryEntityStringList, List<String> queryFeatureStringList) {
+		List<Entity> queryEntityList = Parser.encodeEntityList(queryEntityStringList);
+		List<Feature> queryFeatureList = Parser.encodeFeatureList(queryFeatureStringList);
 
-		for(String entityString : entityStringList) {
-			String[] tokens = entityString.split("_");
-			Entity entity = Parser.encodeEntity(tokens[0], Double.parseDouble(tokens[1]));
+		return new Query(queryEntityList, queryFeatureList);
+	}
 
-			if(entity != null)
-				entityList.add(entity);
-		}
+	@Override
+	public Profile getProfile(Entity queryEntity) {
+		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity));
 
-		List<Feature> featureList = new ArrayList<>();
-
-		for(String featureString : featureStringList) {
-			String[] tokens = featureString.split("_");
-			Feature feature = Parser.encodeFeature(tokens[0], Double.parseDouble(tokens[1]));
-
-			if(feature != null)
-				featureList.add(feature);
-		}
-
-		return new Query(entityList, featureList);
+		return new Profile(queryEntity, relevantFeatureListList);
 	}
 
 	@Override
 	public Profile getProfile(String queryEntityString) {
-		Entity entity = Parser.encodeEntity(queryEntityString);
-		List<List<Feature>> featureListList = Ranker.getRelevantFeatureListList(Arrays.asList(entity));
-		return new Profile(entity, featureListList);
+		Entity queryEntity = Parser.encodeEntity(queryEntityString);
+
+		Parser.richEntity(queryEntity);
+
+		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity));
+
+		return new Profile(queryEntity, relevantFeatureListList);
+	}
+
+	@Override
+	public Profile getProfile(int queryEntityId) {
+		Entity queryEntity = new Entity(queryEntityId);
+
+		Parser.richEntity(queryEntity);
+
+		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity));
+
+		return new Profile(queryEntity, relevantFeatureListList);
 	}
 }

@@ -1,14 +1,15 @@
 package cn.edu.ruc.domain;
 
+import java.text.DecimalFormat;
+
 public class Entity {
 	private int id;
 	private String name;
+	private double score;
 	private String description;
 	private String image;
-	double score;
 
 	public Entity(int id){
-
 		setId(id);
 		setScore(1);
 	}
@@ -30,6 +31,25 @@ public class Entity {
 		setScore(score);
 	}
 
+	@Override
+	public boolean equals(Object object){
+		if(!(object instanceof Entity))
+			return false;
+		if(object == this)
+			return true;
+
+		if(getId() != ((Entity) object).getId())
+			return false;
+
+		return true;
+	}
+
+	public int hashCode(){
+		int value = getId();
+
+		return value;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -44,6 +64,14 @@ public class Entity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public double getScore() {
+		return score;
+	}
+
+	public void setScore(double score) {
+		this.score = score;
 	}
 
 	public String getImage() {
@@ -62,22 +90,15 @@ public class Entity {
 		this.description = description;
 	}
 
-	public double getScore() {
-		return score;
-	}
-
-	public void setScore(double score) {
-		this.score = score;
-	}
-
 	@Override
 	public String toString() {
+
 		return "Entity{" +
-				"id=" + id +
-				", name='" + name + '\'' +
-				", description='" + description + '\'' +
-				", image='" + image + '\'' +
-				", score=" + score +
+				/*"id=" + id +*/
+				"name='" + name + '\'' +
+				", score=" + new DecimalFormat("0.000").format(score) +
+				(description == null ? "" : ", description='" + description + '\'') +
+				(image == null ? "" : ", image='" + image + '\'') +
 				'}';
 	}
 }

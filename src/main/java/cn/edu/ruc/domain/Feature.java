@@ -1,5 +1,7 @@
 package cn.edu.ruc.domain;
 
+import java.text.DecimalFormat;
+
 public class Feature {
     private Entity entity;
     private Relation relation;
@@ -67,7 +69,7 @@ public class Feature {
         return "Feature{" +
                 "relation=" + relation +
                 ", entity=" + entity +
-                ", score=" + score +
+                ", score=" + new DecimalFormat("0.000").format(score) +
                 '}';
     }
 }

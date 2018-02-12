@@ -11,11 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Indexer {
+    //important: pay attention to the strings such ""
+
     //get auto completion list using lucene
     public static List<String> getMatchingList(String keywords){
+        List<String> matchingList = new ArrayList<>();
+
+        if(keywords.trim() == null || keywords.trim() == "")
+            return matchingList;
+
         IndexSearcher searcher = new IndexSearcher(DataUtil.getDirectoryReader());
 
-        List<String> matchingList = new ArrayList<>();
 
         QueryParser parser_context = new QueryParser("context", new StandardAnalyzer());
         Query query_context;

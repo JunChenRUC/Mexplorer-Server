@@ -8,6 +8,7 @@ import cn.edu.ruc.model.Recommendation;
 import cn.edu.ruc.service.ExploreService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 

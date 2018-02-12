@@ -82,7 +82,7 @@ public class DataUtil extends HttpServlet {
 	}
 
 	public static int getEntity2Id(String name){
-		return dictionaryManager.getEntity2Id().get(name);
+		return dictionaryManager.getEntity2Id().containsKey(name) ? dictionaryManager.getEntity2Id().get(name) : -1;
 	}
 
 	public static String getId2Relation(int id){
@@ -90,7 +90,7 @@ public class DataUtil extends HttpServlet {
 	}
 
 	public static int getRelation2Id(String name){
-		return dictionaryManager.getRelation2Id().get(name);
+		return dictionaryManager.getRelation2Id().containsKey(name) ? dictionaryManager.getRelation2Id().get(name) : -1;
 	}
 
 	public static double[] getEntity2Vector(int id){
@@ -123,6 +123,20 @@ public class DataUtil extends HttpServlet {
 		if(DataUtil.tripleManager.getDirection2TripleMap().get(queryRelationDirection).containsKey(queryEntityId)) {
 			if(DataUtil.tripleManager.getDirection2TripleMap().get(queryRelationDirection).get(queryEntityId).containsKey(queryRelationId)) {
 				entitySet = DataUtil.tripleManager.getDirection2TripleMap().get(queryRelationDirection).get(queryEntityId).get(queryRelationId);
+			}
+		}
+
+		return entitySet;
+	}
+
+	public static Set<Integer> getEntitySet(int queryEntityId) {
+		Set<Integer> entitySet = new HashSet<>();
+
+		for(int direction : Directions) {
+			for(Map.Entry<Integer, Set<Integer>> relation2entityEntry : getRelation2EntityMap(queryEntityId, direction).entrySet()) {
+				for(int targetEntityId : relation2entityEntry.getValue()) {
+					entitySet.addAll(getEntitySet(targetEntityId, relation2entityEntry.getKey(), - direction));
+				}
 			}
 		}
 

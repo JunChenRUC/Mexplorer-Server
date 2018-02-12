@@ -1,5 +1,7 @@
 package cn.edu.ruc.domain;
 
+import java.text.DecimalFormat;
+
 public class Relation {
 	private int id;
 	private int direction;
@@ -67,10 +69,10 @@ public class Relation {
 	@Override
 	public String toString() {
 		return "Relation{" +
-				"id=" + id +
-				", direction=" + direction +
+				/*"id=" + id +*/
+				"direction=" + direction +
 				", name='" + name + '\'' +
-				", score=" + score +
+				", score=" + new DecimalFormat("0.000").format(score) +
 				'}';
 	}
 }

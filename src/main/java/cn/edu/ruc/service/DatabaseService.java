@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface DatabaseService {
 	List getHistory();
-	List getSearchHistory(int num);
-	List<String>saveEntity(List<String> list);
+	List getSearchHistory(int id);
+	List<String> saveEntity(List<String> entityStringList);
 
-	String getImg(String name);
-	String getAbstract(String query);
+	String getImg(String entityString);
+	String getAbstract(String entityString);
 }

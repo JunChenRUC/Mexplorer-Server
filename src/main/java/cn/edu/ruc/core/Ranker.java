@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. by Chen Jun
+ */
+
 package cn.edu.ruc.core;
 
 import cn.edu.ruc.domain.Entity;
@@ -5,16 +9,20 @@ import cn.edu.ruc.domain.Relation;
 import cn.edu.ruc.domain.Feature;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class Ranker {
+	//important: pay attention to the thread-safe situation!
+
 	/*---------------Relevant entity---------------*/
 	//get relevant entity list using graph embedding model
 	public static List<Entity> getRelevantEntityList(List<Entity> queryEntityList, List<Feature> queryFeatureList) {
-		Map<Integer, Entity> targetEntityMap = new HashMap<>();
+		//important: hash map is not thread-safe.
+		Map<Integer, Entity> targetEntityMap = new ConcurrentHashMap<>();
 
-		queryEntityList.parallelStream()
-				.forEach(queryEntity -> getRelevantEntityList(queryEntity).parallelStream()
+		queryEntityList.stream() //can not apply parallel steam here, or may occur un-consistence of write and read, consider the lock in the future
+				.forEach(queryEntity -> getRelevantEntityList(queryEntity, false).parallelStream() //can apply parallel steam here, since a query entity can not produce two same target entity
 						.forEach(targetEntity -> {
 							if(targetEntityMap.containsKey(targetEntity.getId())) {
 								targetEntityMap.get(targetEntity.getId()).setScore(targetEntityMap.get(targetEntity.getId()).getScore() + targetEntity.getScore());
@@ -24,8 +32,9 @@ public class Ranker {
 							}
 						}));
 
-		queryFeatureList.parallelStream()
-				.forEach(queryFeature -> getRelevantEntityList(queryFeature).parallelStream()
+
+		queryFeatureList.stream() //can not apply parallel steam here, or may occur un-consistence of write and read, consider the lock in the future
+				.forEach(queryFeature -> getRelevantEntityList(queryFeature, false).parallelStream() //can apply parallel steam here, since a query entity can not produce two same target entity
 						.forEach(targetEntity -> {
 							if(targetEntityMap.containsKey(targetEntity.getId())) {
 								targetEntityMap.get(targetEntity.getId()).setScore(targetEntityMap.get(targetEntity.getId()).getScore() + targetEntity.getScore());
@@ -42,34 +51,51 @@ public class Ranker {
 				.forEach(entity -> {
 					entity.setScore(entity.getScore() / (queryEntityList.size() + queryFeatureList.size()));
 					Parser.decodeEntity(entity);
+					Parser.richEntity(entity);
 				});
 
 		return relevantEntityList;
 	}
 
-	//get relevant entity list of an entity, where the entities should not necessarily connect with this feautre
-	private static List<Entity> getRelevantEntityList(Entity queryEntity) {
-		return DataUtil.getEntitySet().parallelStream()
+	//get relevant entity list of an entity, where the entities should not necessarily connect with this feature
+	private static List<Entity> getRelevantEntityList(Entity queryEntity, boolean isConstraint) {
+		Set<Integer> targetEntitySet;
+
+		if(isConstraint) {
+			targetEntitySet = DataUtil.getEntitySet(queryEntity.getId());
+		} else {
+			targetEntitySet = DataUtil.getEntitySet();
+		}
+
+		return targetEntitySet.parallelStream()
+					.map(targetEntityId -> {
+						//important: consider the weight of queryEntity and queryFeature
+						double score = Computer.getEmbeddingScore(targetEntityId, queryEntity.getId()) * queryEntity.getScore();
+
+						return new Entity(targetEntityId, score);
+					})
+					.collect(Collectors.toList());
+	}
+
+	//get relevant entity list of a feature, where the entities should connect with this feature
+	private static List<Entity> getRelevantEntityList(Feature queryFeature, boolean isConstraint){
+		Set<Integer> targetEntitySet;
+
+		if(isConstraint) {
+			targetEntitySet = DataUtil.getEntitySet(queryFeature.getEntity().getId(), queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection());
+		} else {
+			targetEntitySet = DataUtil.getEntitySet();
+		}
+
+		return targetEntitySet.parallelStream()
 				.map(targetEntityId -> {
 					//important: consider the weight of queryEntity and queryFeature
-					double score = Computer.computeScore(targetEntityId, queryEntity.getId()) * queryEntity.getScore();
+					double score = Computer.getEmbeddingsScore(targetEntityId, queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection(), queryFeature.getEntity().getId()) * queryFeature.getScore();
 
 					return new Entity(targetEntityId, score);
 				})
 				.collect(Collectors.toList());
 	}
-
-	//get relevant entity list of a feature, where the entities should connect with this feature
-	private static List<Entity> getRelevantEntityList(Feature queryFeature){
-		return DataUtil.getEntitySet(queryFeature.getEntity().getId(), queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection()).parallelStream()
-				.map(targetEntityId -> {
-					//important: consider the weight of queryEntity and queryFeature
-					double score = Computer.computeScore(targetEntityId, queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection(), queryFeature.getEntity().getId()) * queryFeature.getScore();
-
-					return new Entity(targetEntityId, score);
-				}).collect(Collectors.toList());
-	}
-
 
 	/*---------------Relevant feature---------------*/
 	//get relevant feature of an entity by its all relations, and classify them as relations by information gain
@@ -87,9 +113,11 @@ public class Ranker {
 
 	//get relevant feature of an entity list by specifying a relation
 	private static List<Feature> getRelevantFeatureList(List<Entity> queryEntityList, Relation queryRelation) {
-		Map<Integer, Feature> featureMap = new HashMap<>();
-		queryEntityList.parallelStream()
-					.forEach(queryEntity -> getRelevantFeatureList(queryEntity, queryRelation).parallelStream()
+		//important: hash map is not thread-safe.
+		Map<Integer, Feature> featureMap = new ConcurrentHashMap<>();
+
+		queryEntityList.stream() //can not apply parallel steam here, or may occur un-consistence of write and read, consider the lock in the future
+					.forEach(queryEntity -> getRelevantFeatureList(queryEntity, queryRelation).parallelStream() //can apply parallel steam here, since a query entity can not produce two same feature
 							.forEach(feature -> {
 								if(featureMap.containsKey(feature.getEntity().getId())) {
 									featureMap.get(feature.getEntity().getId()).getEntity().setScore(featureMap.get(feature.getEntity().getId()).getEntity().getScore() + feature.getEntity().getScore());
@@ -113,17 +141,18 @@ public class Ranker {
 		//important: the direction of the features should be inverse
 		Relation targetRelation = new Relation(queryRelation.getId(), - queryRelation.getDirection(), queryRelation.getScore());
 
-		return sortFeatureList(getRelevantEntityList(new Feature(queryEntity, queryRelation, queryEntity.getScore())).parallelStream()
+		return sortFeatureList(getRelevantEntityList(new Feature(queryEntity, queryRelation, queryEntity.getScore()), true).parallelStream()
 				.map(targetEntity -> new Feature(targetEntity, targetRelation, targetEntity.getScore() * targetRelation.getScore()))
 				.collect(Collectors.toList()));
 	}
 
 	//get relevant relation of an entity list by accumulating their information gain
 	private static List<Relation> getRelevantRelation(List<Entity> queryEntityList){
-		HashMap<Integer, Relation> relationMap = new HashMap<>();
-		queryEntityList.parallelStream()
-				.forEach(queryEntity ->
-					getRelevantRelation(queryEntity).parallelStream()
+		//important: hash map is not thread-safe.
+		Map<Integer, Relation> relationMap = new ConcurrentHashMap<>();
+
+		queryEntityList.stream() //can not apply parallel steam here, or may occur un-consistence of write and read, consider the lock in the future
+				.forEach(queryEntity -> getRelevantRelation(queryEntity).parallelStream() //can apply parallel steam here, since a query entity can not produce two same relation via relation2entityMap
 							.forEach(relation -> {
 								if(relationMap.containsKey(relation.getId())) {
 									relationMap.get(relation.getId()).setScore(relationMap.get(relation.getId()).getScore() + relation.getScore());

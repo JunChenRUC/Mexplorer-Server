@@ -17,24 +17,24 @@ public class DatabaseServiceImp implements DatabaseService {
 	}
 
 	@Override
-	public List getSearchHistory(int num) {
-		return dao.getSearchAll(num);
+	public List getSearchHistory(int id) {
+		return dao.getSearchAll(id);
 	}
 
 	@Override
-	public List<String> saveEntity(List<String> list) {
-		dao.saveEntity(list);
+	public List<String> saveEntity(List<String> entityStringList) {
+		dao.saveEntity(entityStringList);
 		return null;
 	}
 
 	@Override
-	public String getImg(String name) {
-		return dao.geturl(name);
+	public String getImg(String entityString) {
+		return dao.geturl(entityString);
 	}
 
 	@Override
-	public String getAbstract(String query) {
-		return dao.getAbstract(query);
+	public String getAbstract(String entityString) {
+		return dao.getAbstract(entityString);
 	}
 	
 }

@@ -1,5 +1,6 @@
 package cn.edu.ruc.core;
 
+import cn.edu.ruc.domain.Description;
 import cn.edu.ruc.domain.Entity;
 import cn.edu.ruc.domain.Feature;
 import cn.edu.ruc.domain.Relation;
@@ -89,11 +90,9 @@ public class Parser {
         }
     }
 
-
-    public static void richEntity(Entity entity){
+    public static void decodeDescription(Entity entity){
         if(entity != null) {
-            entity.setDescription(DataUtil.getDescription(entity.getId()));
-            entity.setImage(DataUtil.getImage(entity.getId()));
+            entity.setDescription(new Description(DataUtil.getEntity2Plot(entity.getId()), DataUtil.getEntity2Image(entity.getId()), DataUtil.getEntity2Rating(entity.getId())));
         }
     }
 }

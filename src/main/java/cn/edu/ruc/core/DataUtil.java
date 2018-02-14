@@ -22,7 +22,6 @@ public class DataUtil extends HttpServlet {
 	private static VectorManager vectorManager;
 	private static IndexManager indexManager;
 	private static DescriptionManager descriptionManager;
-	private static ImageManager imageManager;
 
 	public DataUtil(){
 		System.out.println("------------------------------------------------------");
@@ -69,10 +68,6 @@ public class DataUtil extends HttpServlet {
 		System.out.println("Indexes are loaded! Time cost: " + (System.currentTimeMillis() - beginTime)/1000 );
 
 		beginTime = System.currentTimeMillis();
-		imageManager = new ImageManager(configManager.getValue("dir") + configManager.getValue("file.image"), dictionaryManager);
-		System.out.println("Images are loaded! Time cost: " + (System.currentTimeMillis() - beginTime)/1000 );
-
-		beginTime = System.currentTimeMillis();
 		descriptionManager = new DescriptionManager(configManager.getValue("dir") + configManager.getValue("file.description"), dictionaryManager);
 		System.out.println("Description are loaded! Time cost: " + (System.currentTimeMillis() - beginTime)/1000 );
 	}
@@ -101,12 +96,16 @@ public class DataUtil extends HttpServlet {
 		return vectorManager.getRelation2Vector().get(id);
 	}
 
-	public static String getDescription(int id) {
-		return descriptionManager.getEntity2Description().containsKey(id) ? descriptionManager.getEntity2Description().get(id) : "";
+	public static String getEntity2Plot(int id) {
+		return descriptionManager.getEntity2Plot().containsKey(id) ? descriptionManager.getEntity2Plot().get(id) : "";
 	}
 
-	public static String getImage(int id) {
-		return imageManager.getEntity2Image().containsKey(id) ? imageManager.getEntity2Image().get(id) : "";
+	public static String getEntity2Image(int id) {
+		return descriptionManager.getEntity2Image().containsKey(id) ? descriptionManager.getEntity2Image().get(id) : "";
+	}
+
+	public static String getEntity2Rating(int id) {
+		return descriptionManager.getEntity2Rating().containsKey(id) ? descriptionManager.getEntity2Rating().get(id) : "";
 	}
 
 	public static DirectoryReader getDirectoryReader(){

@@ -51,7 +51,7 @@ public class Ranker {
 				.forEach(entity -> {
 					entity.setScore(entity.getScore() / (queryEntityList.size() + queryFeatureList.size()));
 					Parser.decodeEntity(entity);
-					Parser.richEntity(entity);
+					Parser.decodeDescription(entity);
 				});
 
 		return relevantEntityList;

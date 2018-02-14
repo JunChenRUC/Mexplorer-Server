@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
-  <display-name>Mexplorer_Test</display-name>
+  <display-name>Movie Explorer</display-name>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
 
   <session-config>
     <session-timeout>1</session-timeout>
@@ -49,7 +53,7 @@
       <param-name>contextConfigLocation</param-name>
       <param-value>classpath*:spring-mvc.xml</param-value>
     </init-param>
-    <load-on-startup>1</load-on-startup>
+    <load-on-startup>2</load-on-startup>
   </servlet>
 
   <servlet-mapping>
@@ -60,7 +64,7 @@
   <servlet>
     <servlet-name>dataManagerServlet</servlet-name>
     <servlet-class>cn.edu.ruc.core.DataUtil</servlet-class>
-    <load-on-startup>2</load-on-startup>
+    <load-on-startup>1</load-on-startup>
   </servlet>
 
   <servlet-mapping>

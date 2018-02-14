@@ -6,8 +6,7 @@ public class Entity {
 	private int id;
 	private String name;
 	private double score;
-	private String description;
-	private String image;
+	private Description description;
 
 	public Entity(int id){
 		setId(id);
@@ -74,19 +73,11 @@ public class Entity {
 		this.score = score;
 	}
 
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public String getDescription() {
+	public Description getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(Description description) {
 		this.description = description;
 	}
 
@@ -97,8 +88,7 @@ public class Entity {
 				/*"id=" + id +*/
 				"name='" + name + '\'' +
 				", score=" + new DecimalFormat("0.000").format(score) +
-				(description == null ? "" : ", description='" + description + '\'') +
-				(image == null ? "" : ", image='" + image + '\'') +
+				(description == null ? "" : ", description=" + description) +
 				'}';
 	}
 }

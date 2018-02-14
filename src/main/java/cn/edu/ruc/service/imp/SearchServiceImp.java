@@ -40,7 +40,7 @@ public class SearchServiceImp implements SearchService {
 	public Profile getProfile(String queryEntityString) {
 		Entity queryEntity = Parser.encodeEntity(queryEntityString);
 
-		Parser.richEntity(queryEntity);
+		Parser.decodeDescription(queryEntity);
 
 		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity));
 
@@ -51,7 +51,7 @@ public class SearchServiceImp implements SearchService {
 	public Profile getProfile(int queryEntityId) {
 		Entity queryEntity = new Entity(queryEntityId);
 
-		Parser.richEntity(queryEntity);
+		Parser.decodeDescription(queryEntity);
 
 		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity));
 

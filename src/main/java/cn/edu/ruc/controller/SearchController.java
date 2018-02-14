@@ -17,7 +17,6 @@ import java.util.List;
 @RequestMapping("/")
 @Scope("prototype")
 public class SearchController {
-
 	@Autowired
 	SearchService searchService;
 

@@ -16,7 +16,6 @@ import java.util.Arrays;
 @RequestMapping("/")
 @Scope("prototype")
 public class ExploreController {
-
 	@Autowired
 	SearchService searchService;
 	@Autowired

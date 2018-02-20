@@ -8,7 +8,6 @@ import cn.edu.ruc.domain.Relation;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Parser {
     //important: pay attention to the strings such ""
 

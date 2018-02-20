@@ -32,14 +32,14 @@ public class Query {
 
     @Override
     public String toString() {
-        String s = "Query{";
-        s += "\n\tentityList=";
+        String s = "\n\tQuery{";
+        s += "\n\t\tentityList=";
         for(Entity entity : getEntityList())
-            s += "\n\t\t" + entity;
-        s += "\n\tfeatureList=";
+            s += "\n\t\t\t" + entity;
+        s += "\n\t\tfeatureList=";
         for(Feature feature : getFeatureList())
-            s += "\n\t\t" + feature;
-        s += "\n}";
+            s += "\n\t\t\t" + feature;
+        s += "\n\t}";
 
         return s;
     }

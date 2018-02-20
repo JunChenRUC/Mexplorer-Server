@@ -17,6 +17,7 @@ public class DataUtil extends HttpServlet {
 	public static int[] Directions;
 
 	private static ConfigManager configManager;
+	private static LogManager logManager;
 	private static DictionaryManager dictionaryManager;
 	private static TripleManager tripleManager;
 	private static VectorManager vectorManager;
@@ -35,6 +36,7 @@ public class DataUtil extends HttpServlet {
 
 	private void loadConfiguration(){
 		configManager = new ConfigManager("conf.properties");
+		logManager = new LogManager();
 		System.out.println("Configurations are loaded!");
 	}
 
@@ -70,6 +72,10 @@ public class DataUtil extends HttpServlet {
 		beginTime = System.currentTimeMillis();
 		descriptionManager = new DescriptionManager(configManager.getValue("dir") + configManager.getValue("file.description"), dictionaryManager);
 		System.out.println("Description are loaded! Time cost: " + (System.currentTimeMillis() - beginTime)/1000 );
+	}
+
+	public static LogManager getLogManager () {
+		return logManager;
 	}
 
 	public static String getId2Entity(int id){

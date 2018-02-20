@@ -1,10 +1,10 @@
 package cn.edu.ruc.controller;
 
 import cn.edu.ruc.core.DataUtil;
-import cn.edu.ruc.domain.Entity;
+import cn.edu.ruc.model.Dropdown;
 import cn.edu.ruc.model.Profile;
 import cn.edu.ruc.model.Query;
-import cn.edu.ruc.model.Recommendation;
+import cn.edu.ruc.model.Result;
 import cn.edu.ruc.service.ExploreService;
 import cn.edu.ruc.service.SearchService;
 import cn.edu.ruc.service.imp.ExploreServiceImp;
@@ -42,7 +42,7 @@ public class ControllerTest {
     public static List<Object> getParameters() {
         return Arrays.asList(new Object[][]{
                 {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump_1"}), Arrays.asList(new String[]{})},
-                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{"Forrest Gump_1", "Apollo 13 (film)_1"}), Arrays.asList(new String[]{})},
+                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1_1"})},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"Forrest Gump_1", "Apollo 13 (film)_1"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1_1"})},
                 {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1_1", "Gary Sinise##Actor##-1_1"})},
         });
@@ -72,16 +72,14 @@ public class ControllerTest {
     }
     /**
      *
-     * Method: getAutoCompletion(@RequestParam("keywords") String keywords)
+     * Method: getDropdown(@RequestParam("keywords") String keywords)
      *
      */
     @Test
-    public void testGetAutoCompletion() throws Exception {
-        System.out.println("@Test(getAutoCompletion(@RequestParam(\"keywords\") String keywords))");
+    public void testDropdown() throws Exception {
+        System.out.println("@Test(getDropdown(@RequestParam(\"keywords\") String keywords))");
 
-        List<String> autoCompletion = searchService.getAutoCompletionList(keywords);
-
-        System.out.println(autoCompletion);
+        searchService.getDropdown(keywords);
     }
 
 
@@ -94,9 +92,7 @@ public class ControllerTest {
     public void testGetQuery() throws Exception {
         System.out.println("@Test(getQuery(@RequestParam(required = false, value = \"entities\") String[] entityStringList, @RequestParam(required = false, value = \"features\") String[] featureStringList))");
 
-        Query query = searchService.getQuery(entityStringList, featureStringList);
-
-        System.out.println(query);
+        searchService.getQuery(entityStringList, featureStringList);
     }
 
 
@@ -109,27 +105,19 @@ public class ControllerTest {
     public void testGetProfile() throws Exception {
         System.out.println("@Test(getProfile(@RequestParam(\"entity\") String entityString))");
 
-        Profile profile = searchService.getProfile(entityString);
-
-        System.out.println(profile);
+        searchService.getProfile(entityString);
     }
-
-
 
 
     /**
     *
-    * Method: getRecommendation(@RequestParam(required = false, value = "entities") String[] entityStringList, @RequestParam(required = false, value = "features") String[] featureStringList)
+    * Method: getResult(@RequestParam(required = false, value = "entities") String[] entityStringList, @RequestParam(required = false, value = "features") String[] featureStringList)
     *
     */
     @Test
-    public void testGetRecommendation() throws Exception {
-        System.out.println("@Test(getRecommendation(@RequestParam(required = false, value = \"entities\") String[] entityStringList, @RequestParam(required = false, value = \"features\") String[] featureStringList))");
+    public void testGetResult() throws Exception {
+        System.out.println("@Test(getResult(@RequestParam(required = false, value = \"entities\") String[] entityStringList, @RequestParam(required = false, value = \"features\") String[] featureStringList))");
 
-        Query query = searchService.getQuery(entityStringList, featureStringList);
-
-        Recommendation recommendation = exploreService.getRecommendation(query);
-
-        System.out.println(query + "\n" + recommendation);
+        exploreService.getResult(searchService.getQuery(entityStringList, featureStringList));
     }
 } 

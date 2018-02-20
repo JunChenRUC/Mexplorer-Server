@@ -32,12 +32,12 @@ public class Profile {
 
     @Override
     public String toString() {
-        String s = "Profile{";
-        s += "\n\tentity=\n\t\t" + getEntity() + "\n\tfeatureList=";
+        String s = "\n\tProfile{";
+        s += "\n\t\tentity=\n\t\t\t" + getEntity() + "\n\t\tfeatureList=";
         for(List<Feature> featureList: getFeatureListList())
             for(Feature feature : featureList)
-                s += "\n\t\t" + feature;
-        s += "\n}";
+                s += "\n\t\t\t" + feature;
+        s += "\n\t}";
 
         return s;
     }

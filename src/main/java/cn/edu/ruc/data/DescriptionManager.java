@@ -8,7 +8,6 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class DescriptionManager {
 	public Map<Integer, String> entity2plot = new HashMap<>();
 	public Map<Integer, String> entity2image = new HashMap<>();

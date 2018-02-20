@@ -36,5 +36,4 @@ public class DatabaseServiceImp implements DatabaseService {
 	public String getAbstract(String entityString) {
 		return dao.getAbstract(entityString);
 	}
-	
 }

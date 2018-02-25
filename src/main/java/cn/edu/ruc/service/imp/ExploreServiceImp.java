@@ -20,11 +20,15 @@ public class ExploreServiceImp implements ExploreService {
 	public Result getResult(Query query) {
 		long time = System.currentTimeMillis();
 
-		List<Entity> relevantEntityList = Ranker.getRelevantEntityList(query.getEntityList(), query.getFeatureList());
-		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(relevantEntityList);
-		Profile profile = new Profile(relevantEntityList.get(0), Ranker.getRelevantFeatureListList(Arrays.asList(relevantEntityList.get(0))));
+		List<Entity> entityList = Ranker.getRelevantEntityList(query.getEntityList(), query.getFeatureList());
 
-		Result result = new Result(query, relevantEntityList, relevantFeatureListList, profile);
+		Profile profile = new Profile(entityList.get(0), Ranker.getRelevantFeatureListList(Arrays.asList(entityList.get(0)), true));
+
+		List<List<Feature>> leftFeatureListList = Ranker.getRelevantFeatureListList(entityList, true);
+
+		List<List<Feature>> rightFeatureListList = Ranker.getRelevantFeatureListList(entityList, false);
+
+		Result result = new Result(query, entityList, profile, leftFeatureListList, rightFeatureListList);
 
 		DataUtil.getLogManager().appendInfo("\nResult: " + result + "\nTime: " + (System.currentTimeMillis() - time) / 1000 + "s!");
 

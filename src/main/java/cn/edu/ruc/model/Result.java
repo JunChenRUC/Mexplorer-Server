@@ -8,14 +8,16 @@ import java.util.List;
 public class Result {
     private Query query;
     private List<Entity> entityList;
-    private List<List<Feature>> featureListList;
     private Profile profile;
+    private List<List<Feature>> leftFeatureListList;
+    private List<List<Feature>> rightFeatureListList;
 
-    public Result(Query query, List<Entity> entityList, List<List<Feature>> featureListList, Profile profile) {
+    public Result(Query query, List<Entity> entityList, Profile profile, List<List<Feature>> leftFeatureListList, List<List<Feature>> rightFeatureListList) {
         setQuery(query);
         setEntityList(entityList);
-        setFeatureListList(featureListList);
         setProfile(profile);
+        setLeftFeatureListList(leftFeatureListList);
+        setRightFeatureListList(rightFeatureListList);
     }
 
     public Query getQuery() {
@@ -34,14 +36,6 @@ public class Result {
         this.entityList = entityList;
     }
 
-    public List<List<Feature>> getFeatureListList() {
-        return featureListList;
-    }
-
-    public void setFeatureListList(List<List<Feature>> featureListList) {
-        this.featureListList = featureListList;
-    }
-
     public Profile getProfile() {
         return profile;
     }
@@ -50,6 +44,23 @@ public class Result {
         this.profile = profile;
     }
 
+    public List<List<Feature>> getLeftFeatureListList() {
+        return leftFeatureListList;
+    }
+
+    public void setLeftFeatureListList(List<List<Feature>> leftFeatureListList) {
+        this.leftFeatureListList = leftFeatureListList;
+    }
+
+    public List<List<Feature>> getRightFeatureListList() {
+        return rightFeatureListList;
+    }
+
+    public void setRightFeatureListList(List<List<Feature>> rightFeatureListList) {
+        this.rightFeatureListList = rightFeatureListList;
+    }
+
+
     @Override
     public String toString() {
         String s = "\nResult{";
@@ -57,11 +68,15 @@ public class Result {
         s += "\n\tentityList=";
         for(Entity entity : getEntityList())
             s += "\n\t\t" + entity;
-        s += "\n\tfeatureList=";
-        for(List<Feature> featureList: getFeatureListList())
+        s += "\n\tprofile=" + profile;
+        s += "\n\tleftFeatureList=";
+        for(List<Feature> featureList: getLeftFeatureListList())
             for(Feature feature : featureList)
                 s += "\n\t\t" + feature;
-        s += "\n\tprofile=" + profile;
+        s += "\n\trightFeatureList=";
+        for(List<Feature> featureList: getRightFeatureListList())
+            for(Feature feature : featureList)
+                s += "\n\t\t" + feature;
         s += "\n}";
 
         return s;

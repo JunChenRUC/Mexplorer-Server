@@ -45,15 +45,6 @@ public class SearchServiceImp implements SearchService {
 	}
 
 	@Override
-	public Profile getProfile(Entity queryEntity) {
-
-		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity));
-
-
-		return new Profile(queryEntity, relevantFeatureListList);
-	}
-
-	@Override
 	public Profile getProfile(String queryEntityString) {
 		long time = System.currentTimeMillis();
 
@@ -61,23 +52,12 @@ public class SearchServiceImp implements SearchService {
 
 		Parser.decodeDescription(queryEntity);
 
-		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity));
+		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity), true);
 
 		Profile profile = new Profile(queryEntity, relevantFeatureListList);
 
 		DataUtil.getLogManager().appendInfo("\nQuery entity string:\n\t" + queryEntityString + "\nProfile:" + profile + "\nTime: " + (System.currentTimeMillis() - time) / 1000 + "s");
 
 		return profile;
-	}
-
-	@Override
-	public Profile getProfile(int queryEntityId) {
-		Entity queryEntity = new Entity(queryEntityId);
-
-		Parser.decodeDescription(queryEntity);
-
-		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity));
-
-		return new Profile(queryEntity, relevantFeatureListList);
 	}
 }

@@ -10,13 +10,8 @@ import java.util.List;
 
 public class Parser {
     //important: pay attention to the strings such ""
-
     public static Entity encodeEntity(String entityString) {
         return DataUtil.getEntity2Id(entityString) == -1 ? null : new Entity(DataUtil.getEntity2Id(entityString), entityString);
-    }
-
-    public static Entity encodeEntity(String entityString, double score) {
-        return DataUtil.getEntity2Id(entityString) == -1 ? null : new Entity(DataUtil.getEntity2Id(entityString), entityString, score);
     }
 
     public static List<Entity> encodeEntityList(List<String> entityStringList) {
@@ -24,7 +19,11 @@ public class Parser {
 
         for(String entityString : entityStringList) {
             String[] tokens = entityString.split("_");
-            Entity entity = Parser.encodeEntity(tokens[0], Double.parseDouble(tokens[1]));
+            Entity entity = Parser.encodeEntity(tokens[0]);
+
+            if(entity != null && tokens.length == 2) {
+                entity.setScore(Double.parseDouble(tokens[1]));
+            }
 
             if(entity != null) {
                 entityList.add(entity);
@@ -38,20 +37,16 @@ public class Parser {
         return DataUtil.getRelation2Id(relationString) == -1 ? null : new Relation(DataUtil.getRelation2Id(relationString), direction, relationString);
     }
 
-    public static Relation encodeRelation(String relationString, int direction, double score) {
-        return DataUtil.getRelation2Id(relationString) == -1 ? null : new Relation(DataUtil.getRelation2Id(relationString), direction, relationString, score);
-    }
-
-    public static Feature encodeFeature(String featureString, double score) {
+    public static Feature encodeFeature(String featureString) {
         String[] tokens = featureString.split("##");
         String entityString = tokens[0];
         String relationString = tokens[1];
         int relationDirection = (tokens.length == 3) ? Integer.parseInt(tokens[2]) : -1;
 
-        Entity entity = encodeEntity(entityString, score);
-        Relation relation = encodeRelation(relationString, relationDirection, score);
+        Entity entity = encodeEntity(entityString);
+        Relation relation = encodeRelation(relationString, relationDirection);
 
-        return entity != null && relation != null ? new Feature(entity, relation, score) : null;
+        return entity != null && relation != null ? new Feature(entity, relation) : null;
     }
 
     public static List<Feature> encodeFeatureList(List<String> featureStringList) {
@@ -59,7 +54,11 @@ public class Parser {
 
         for(String featureString : featureStringList) {
             String[] tokens = featureString.split("_");
-            Feature feature = Parser.encodeFeature(tokens[0], Double.parseDouble(tokens[1]));
+            Feature feature = Parser.encodeFeature(tokens[0]);
+
+            if(feature != null && tokens.length == 2) {
+                feature.setScore(Double.parseDouble(tokens[1]));
+            }
 
             if(feature != null) {
                 featureList.add(feature);

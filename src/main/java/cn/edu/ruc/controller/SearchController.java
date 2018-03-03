@@ -19,26 +19,26 @@ public class SearchController {
 	@Autowired
 	SearchService searchService;
 
-	//localhost:8080/getDropdown?keywords=Forrest
+	//localhost:8080/controller/getDropdown?keywords=Forrest
 	@ResponseBody
 	@RequestMapping(value = "getDropdown", method = RequestMethod.GET)
 	public Dropdown getDropdown(@RequestParam("keywords") String keywords){
 		return searchService.getDropdown(keywords);
 	}
 
-	//localhost:8080/getProfile?entity=Forrest Gump
+	//localhost:8080/controller/getProfile?queryEntity=Forrest Gump
 	@ResponseBody
 	@RequestMapping(value = "getProfile", method = RequestMethod.GET)
-	public Profile getProfile(@RequestParam("entity") String entityString){
-		return searchService.getProfile(entityString);
+	public Profile getProfile(@RequestParam("queryEntity") String queryEntityString){
+		return searchService.getProfile(queryEntityString);
 	}
 
-	//localhost:8080/getQuery?entities=Forrest Gump_1&features=Tom Hanks%23%23Actor%23%23-1_1
+	//localhost:8080/controller/getQuery?queryEntities=Forrest Gump_1&queryFeatures=Tom Hanks%23%23Actor%23%23-1_1
 	//an element of the query is composed of an entity (or a feature) and the weight via "_"
 	//a feature is composed of an entity, a relation and a direction via ## (should be transferred to %23%23)
 	@ResponseBody
 	@RequestMapping(value = "getQuery", method = RequestMethod.GET)
-	public Query getQuery(@RequestParam(required = false, value = "entities") String[] entityStringList, @RequestParam(required = false, value = "features") String[] featureStringList){
-		return searchService.getQuery(Arrays.asList(entityStringList), Arrays.asList(featureStringList));
+	public Query getQuery(@RequestParam(value = "queryEntities") String[] queryEntityStringList, @RequestParam(value = "queryFeatures") String[] queryFeatureStringList){
+		return searchService.getQuery(Arrays.asList(queryEntityStringList), Arrays.asList(queryFeatureStringList));
 	}
 }

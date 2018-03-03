@@ -47,6 +47,17 @@
   </context-param>
 
   <servlet>
+    <servlet-name>dataManagerServlet</servlet-name>
+    <servlet-class>cn.edu.ruc.core.DataUtil</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>dataManagerServlet</servlet-name>
+    <url-pattern>/hello</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>dispatcherServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
@@ -58,17 +69,6 @@
 
   <servlet-mapping>
     <servlet-name>dispatcherServlet</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>dataManagerServlet</servlet-name>
-    <servlet-class>cn.edu.ruc.core.DataUtil</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>dataManagerServlet</servlet-name>
-    <url-pattern>/init</url-pattern>
+    <url-pattern>/controller/*</url-pattern>
   </servlet-mapping>
 </web-app>

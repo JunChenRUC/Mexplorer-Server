@@ -35,7 +35,9 @@ public class IndexManager {
 
 				String tmpString;
 				while((tmpString = reader.readLine()) != null){
-					indexWriter.addDocument(createEntity(tmpString));
+					if(tmpString.contains("##")) {
+						indexWriter.addDocument(createEntity(tmpString));
+					}
 				}
 
 				reader.close();

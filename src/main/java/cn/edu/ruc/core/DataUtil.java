@@ -4,6 +4,7 @@ import cn.edu.ruc.data.*;
 import org.apache.lucene.index.DirectoryReader;
 
 import javax.servlet.http.HttpServlet;
+import java.io.*;
 import java.util.*;
 
 public class DataUtil extends HttpServlet {
@@ -156,5 +157,45 @@ public class DataUtil extends HttpServlet {
 		}
 
 		return relation2entityMap;
+	}
+
+	public static void writeBookmark(String userId, String taskId, List<String> relevantEntityStringList) {
+		try {
+			File file = new File(configManager.getValue("dir") + configManager.getValue("file.bookmark.log"));
+			if(!file.exists())
+				file.createNewFile();
+
+			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+
+			for(int j = 0 ; j < relevantEntityStringList.size(); j ++) {
+				printWriter.print(userId + "\t");
+				printWriter.print(taskId + "\t");
+				printWriter.println(relevantEntityStringList.get(j));
+			}
+
+			printWriter.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void writeInteraction(String userId, String taskId, String area, String option, String content, String timestamp) {
+		try {
+			File file = new File(configManager.getValue("dir") + configManager.getValue("file.interaction.log"));
+			if(!file.exists())
+				file.createNewFile();
+
+			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+
+			printWriter.println(userId + "\t" + taskId + "\t" + area + "\t" + option + "\t" + content + "\t" + timestamp + "\t");
+
+			printWriter.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

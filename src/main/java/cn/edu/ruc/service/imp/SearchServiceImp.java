@@ -1,6 +1,5 @@
 package cn.edu.ruc.service.imp;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import cn.edu.ruc.model.Query;
 import cn.edu.ruc.service.SearchService;
 import cn.edu.ruc.core.Parser;
 import cn.edu.ruc.core.Ranker;
-import org.apache.log4j.PropertyConfigurator;
 import org.springframework.stereotype.Service;
 
 @Service

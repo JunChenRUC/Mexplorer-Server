@@ -45,11 +45,18 @@ public class Ranker {
 		List<Entity> relevantEntityList = sortEntityList(new ArrayList<>(targetEntityMap.values()));
 
 		//normalize the score of each entity, and parse their names
-		relevantEntityList.parallelStream()
+		/*relevantEntityList.parallelStream()
 				.forEach(entity -> {
 					Parser.decodeEntity(entity);
 					Parser.decodeDescription(entity);
-				});
+				});*/
+
+		for(int i = 0; i < relevantEntityList.size(); i ++) {
+			relevantEntityList.get(i).setRank(i + 1);
+			//relevantEntityList.get(i).setScore(relevantEntityList.get(i).getScore() / (queryEntityList.size() + queryFeatureList.size()));
+			Parser.decodeEntity(relevantEntityList.get(i));
+			Parser.decodeDescription(relevantEntityList.get(i));
+		}
 
 		return relevantEntityList;
 	}
@@ -143,56 +150,27 @@ public class Ranker {
 		}
 	}
 
-
 	/*---------------Relevant feature---------------*/
 	//get relevant feature of an entity by its all relations, and classify them as relations by information gain
 	public static List<List<Feature>> getRelevantFeatureListList(List<Entity> queryEntityList, boolean isConnected) {
-		List<List<Feature>> relevantFeatureList = getRelevantRelation(queryEntityList).stream()
+		List<List<Feature>> relevantFeatureListList = getRelevantRelation(queryEntityList).stream()
 				.map(queryRelation -> getRelevantFeatureList(queryEntityList, queryRelation, isConnected))
 				.collect(Collectors.toList());
 
-		relevantFeatureList.parallelStream()
+		/*relevantFeatureListList.parallelStream()
 				.forEach(featureList -> featureList.parallelStream()
-						.forEach(feature -> Parser.decodeFeature(feature)));
+						.forEach(feature -> Parser.decodeFeature(feature)));*/
 
-		return relevantFeatureList;
+		for(int i = 0; i < relevantFeatureListList.size(); i ++) {
+			for(int j = 0; j < relevantFeatureListList.get(i).size(); j ++) {
+				relevantFeatureListList.get(i).get(j).setRank(j + 1);
+				//relevantFeatureListList.get(i).get(j).setScore(relevantFeatureListList.get(i).get(j).getScore() / queryEntityList.size());
+				Parser.decodeFeature(relevantFeatureListList.get(i).get(j));
+			}
+		}
+
+		return relevantFeatureListList;
 	}
-
-	//get relevant feature of an entity list by specifying a relation
-	/*private static List<Feature> getRelevantFeatureList(List<Entity> queryEntityList, Relation queryRelation, boolean isConnected) {
-		//important: hash map is not thread-safe.
-		Map<Integer, Feature> featureMap = new ConcurrentHashMap<>();
-
-		queryEntityList.stream() //can not apply parallel steam here, or may occur un-consistence of write and read, consider the lock in the future
-					.forEach(queryEntity -> getRelevantFeatureList(queryEntity, queryRelation, isConnected).parallelStream() //can apply parallel steam here, since a query entity can not produce two same feature
-							.forEach(feature -> {
-								if(featureMap.containsKey(feature.getEntity().getId())) {
-									featureMap.get(feature.getEntity().getId()).getEntity().setScore(featureMap.get(feature.getEntity().getId()).getEntity().getScore() + feature.getEntity().getScore());
-								}
-								else {
-									featureMap.put(feature.getEntity().getId(), feature);
-								}
-							}));
-
-		featureMap.values().parallelStream()
-				.forEach(feature -> {
-						feature.getEntity().setScore(feature.getEntity().getScore() / queryEntityList.size());
-						feature.setScore(feature.getRelation().getScore() * feature.getEntity().getScore());
-					});
-
-		return sortFeatureList(new ArrayList<>(featureMap.values()));
-	}
-
-	//get relevant feature of an entity by specifying a relation
-	private static List<Feature> getRelevantFeatureList(Entity queryEntity, Relation queryRelation, boolean isConnected) {
-		//important: the direction of the features should be inverse
-		Relation targetRelation = new Relation(queryRelation.getId(), - queryRelation.getDirection(), queryRelation.getScore());
-
-		return sortFeatureList(getRelevantEntityList(new Feature(queryEntity, queryRelation, queryEntity.getScore()), isConnected).parallelStream()
-				.map(targetEntity -> new Feature(targetEntity, targetRelation, targetEntity.getScore() * targetRelation.getScore()))
-				.collect(Collectors.toList()));
-	}
-	*/
 
 	private static List<Feature> getRelevantFeatureList(List<Entity> queryEntityList, Relation queryRelation, boolean isConnected) {
 		//important: the direction of the features should be inverse
@@ -275,4 +253,40 @@ public class Ranker {
 				.limit(featureList.size() < DataUtil.Output_Feature_Size ? featureList.size() : DataUtil.Output_Feature_Size)
 				.collect(Collectors.toList());
 	}
+
+	//get relevant feature of an entity list by specifying a relation
+	/*private static List<Feature> getRelevantFeatureList(List<Entity> queryEntityList, Relation queryRelation, boolean isConnected) {
+		//important: hash map is not thread-safe.
+		Map<Integer, Feature> featureMap = new ConcurrentHashMap<>();
+
+		queryEntityList.stream() //can not apply parallel steam here, or may occur un-consistence of write and read, consider the lock in the future
+					.forEach(queryEntity -> getRelevantFeatureList(queryEntity, queryRelation, isConnected).parallelStream() //can apply parallel steam here, since a query entity can not produce two same feature
+							.forEach(feature -> {
+								if(featureMap.containsKey(feature.getEntity().getId())) {
+									featureMap.get(feature.getEntity().getId()).getEntity().setScore(featureMap.get(feature.getEntity().getId()).getEntity().getScore() + feature.getEntity().getScore());
+								}
+								else {
+									featureMap.put(feature.getEntity().getId(), feature);
+								}
+							}));
+
+		featureMap.values().parallelStream()
+				.forEach(feature -> {
+						feature.getEntity().setScore(feature.getEntity().getScore() / queryEntityList.size());
+						feature.setScore(feature.getRelation().getScore() * feature.getEntity().getScore());
+					});
+
+		return sortFeatureList(new ArrayList<>(featureMap.values()));
+	}
+
+	//get relevant feature of an entity by specifying a relation
+	private static List<Feature> getRelevantFeatureList(Entity queryEntity, Relation queryRelation, boolean isConnected) {
+		//important: the direction of the features should be inverse
+		Relation targetRelation = new Relation(queryRelation.getId(), - queryRelation.getDirection(), queryRelation.getScore());
+
+		return sortFeatureList(getRelevantEntityList(new Feature(queryEntity, queryRelation, queryEntity.getScore()), isConnected).parallelStream()
+				.map(targetEntity -> new Feature(targetEntity, targetRelation, targetEntity.getScore() * targetRelation.getScore()))
+				.collect(Collectors.toList()));
+	}
+	*/
 }	

@@ -6,6 +6,7 @@ public class Feature {
     private Entity entity;
     private Relation relation;
     private double score;
+    private int rank;
 
     public Feature(Entity entity, Relation relation){
         setEntity(entity);
@@ -64,12 +65,21 @@ public class Feature {
         this.score = score;
     }
 
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
     @Override
     public String toString() {
         return "Feature{" +
                 "relation=" + relation +
                 ", entity=" + entity +
                 ", score=" + new DecimalFormat("0.000").format(score) +
+                ", rank=" + rank +
                 '}';
     }
 }

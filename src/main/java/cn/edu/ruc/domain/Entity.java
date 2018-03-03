@@ -6,6 +6,7 @@ public class Entity {
 	private int id;
 	private String name;
 	private double score;
+	private int rank;
 	private Description description;
 
 	public Entity(int id){
@@ -73,6 +74,14 @@ public class Entity {
 		this.score = score;
 	}
 
+	public int getRank() {
+		return rank;
+	}
+
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
+
 	public Description getDescription() {
 		return description;
 	}
@@ -88,6 +97,7 @@ public class Entity {
 				/*"id=" + id +*/
 				"name='" + name + '\'' +
 				", score=" + new DecimalFormat("0.000").format(score) +
+				(rank == 0 ? "" : ", rank=" + rank) +
 				(description == null ? "" : ", description=" + description) +
 				'}';
 	}

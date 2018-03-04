@@ -1,6 +1,7 @@
 package cn.edu.ruc.core;
 
 import cn.edu.ruc.data.*;
+import cn.edu.ruc.domain.Task;
 import org.apache.lucene.index.DirectoryReader;
 
 import javax.servlet.http.HttpServlet;
@@ -24,6 +25,7 @@ public class DataUtil extends HttpServlet {
 	private static VectorManager vectorManager;
 	private static IndexManager indexManager;
 	private static DescriptionManager descriptionManager;
+	private static TaskManager taskManager;
 
 	public DataUtil(){
 		System.out.println("------------------------------------------------------");
@@ -73,6 +75,10 @@ public class DataUtil extends HttpServlet {
 		beginTime = System.currentTimeMillis();
 		descriptionManager = new DescriptionManager(configManager.getValue("dir") + configManager.getValue("file.description"), dictionaryManager);
 		System.out.println("Description are loaded! Time cost: " + (System.currentTimeMillis() - beginTime)/1000 );
+
+		beginTime = System.currentTimeMillis();
+		taskManager = new TaskManager(configManager.getValue("dir") + configManager.getValue("file.task"));
+		System.out.println("Tasks are loaded! Time cost: " + (System.currentTimeMillis() - beginTime)/1000 );
 	}
 
 	public static LogManager getLogManager () {
@@ -119,6 +125,15 @@ public class DataUtil extends HttpServlet {
 		return indexManager.getDirectoryReader();
 	}
 
+	public static Task getTask(int id) {
+		return taskManager.getTaskMap().get(id);
+	}
+
+	public static Map<Integer, Task> getTaskMap() {
+		return taskManager.getTaskMap();
+	}
+
+
 	public static Set<Integer> getEntitySet(){
 		return DataUtil.dictionaryManager.getId2Entity().keySet();
 	}
@@ -159,7 +174,7 @@ public class DataUtil extends HttpServlet {
 		return relation2entityMap;
 	}
 
-	public static void writeBookmark(String userId, String taskId, List<String> relevantEntityStringList) {
+	public static void writeBookmark(String userId, String taskId, String versionId, List<String> relevantEntityStringList) {
 		try {
 			File file = new File(configManager.getValue("dir") + configManager.getValue("file.bookmark.log"));
 			if(!file.exists())
@@ -168,9 +183,7 @@ public class DataUtil extends HttpServlet {
 			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 
 			for(int j = 0 ; j < relevantEntityStringList.size(); j ++) {
-				printWriter.print(userId + "\t");
-				printWriter.print(taskId + "\t");
-				printWriter.println(relevantEntityStringList.get(j));
+				printWriter.println(userId + "\t" + taskId + "\t" + versionId + "\t" + relevantEntityStringList.get(j));
 			}
 
 			printWriter.close();
@@ -181,7 +194,7 @@ public class DataUtil extends HttpServlet {
 		}
 	}
 
-	public static void writeInteraction(String userId, String taskId, String area, String option, String content, String timestamp) {
+	public static void writeInteraction(String userId, String taskId, String versionId, String area, String option, String content, String timestamp) {
 		try {
 			File file = new File(configManager.getValue("dir") + configManager.getValue("file.interaction.log"));
 			if(!file.exists())
@@ -189,7 +202,7 @@ public class DataUtil extends HttpServlet {
 
 			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 
-			printWriter.println(userId + "\t" + taskId + "\t" + area + "\t" + option + "\t" + content + "\t" + timestamp + "\t");
+			printWriter.println(userId + "\t" + taskId + "\t" + versionId + "\t" + area + "\t" + option + "\t" + content + "\t" + timestamp + "\t");
 
 			printWriter.close();
 		} catch (FileNotFoundException e) {

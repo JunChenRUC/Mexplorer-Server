@@ -34,14 +34,4 @@ public class ExploreServiceImp implements ExploreService {
 
 		return result;
 	}
-
-	@Override
-	public void sendBookmark(String userId, String taskId, List<String> relevantEntityStringList) {
-		DataUtil.writeBookmark(userId, taskId, relevantEntityStringList);
-	}
-
-	@Override
-	public void sendInteraction(String userId, String taskId, String area, String option, String content, String timestamp) {
-		DataUtil.writeInteraction(userId, taskId, area, option, content, timestamp);
-	}
 }

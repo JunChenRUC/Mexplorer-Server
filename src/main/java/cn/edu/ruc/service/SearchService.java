@@ -1,10 +1,12 @@
 package cn.edu.ruc.service;
 
+import cn.edu.ruc.domain.Task;
 import cn.edu.ruc.model.Dropdown;
 import cn.edu.ruc.model.Profile;
 import cn.edu.ruc.model.Query;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SearchService {
 	//get auto completion list
@@ -15,4 +17,18 @@ public interface SearchService {
 
 	//get profile of entity
 	Profile getProfile(String queryEntityString);
+
+	//get task
+	Task getTask(int taskId);
+
+	//get task map
+	Map getTaskMap();
+
+	//send entity
+	void sendBookmark(String userId, String taskId, String versionId, List<String> relevantEntityStringList);
+
+	//send interaction
+	void sendInteraction(String userId, String taskId, String versionId, String area, String option, String content, String timestamp);
+
+
 }

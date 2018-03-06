@@ -21,7 +21,7 @@ public class Ranker {
 		Map<Integer, Entity> targetEntityMap = new ConcurrentHashMap<>();
 
 		if(queryEntityList != null && queryEntityList.size() > 0) {
-			getRelevantEntityListByEntity(queryEntityList, true).parallelStream() //can apply parallel steam here, since a query entity can not produce two same target entity
+			getRelevantEntityListByEntity(queryEntityList, false).parallelStream() //can apply parallel steam here, since a query entity can not produce two same target entity
 					.forEach(targetEntity -> {
 						if (targetEntityMap.containsKey(targetEntity.getId())) {
 							targetEntityMap.get(targetEntity.getId()).setScore(targetEntityMap.get(targetEntity.getId()).getScore() + targetEntity.getScore());
@@ -40,16 +40,20 @@ public class Ranker {
 							targetEntityMap.put(targetEntity.getId(), targetEntity);
 						}
 					});
+
+			if(targetEntityMap.size() < DataUtil.Output_Entity_Size) {
+				getRelevantEntityListByFeature(queryFeatureList, false).parallelStream() //can apply parallel steam here, since a query entity can not produce two same target entity
+						.forEach(targetEntity -> {
+							if (targetEntityMap.containsKey(targetEntity.getId())) {
+								targetEntityMap.get(targetEntity.getId()).setScore(targetEntityMap.get(targetEntity.getId()).getScore() + targetEntity.getScore());
+							} else {
+								targetEntityMap.put(targetEntity.getId(), targetEntity);
+							}
+						});
+			}
 		}
 
-		List<Entity> relevantEntityList = sortEntityList(new ArrayList<>(targetEntityMap.values()));
-
-		//normalize the score of each entity, and parse their names
-		/*relevantEntityList.parallelStream()
-				.forEach(entity -> {
-					Parser.decodeEntity(entity);
-					Parser.decodeDescription(entity);
-				});*/
+		List<Entity> relevantEntityList = sortEntityList(new ArrayList<>(targetEntityMap.values()), DataUtil.Output_Entity_Size);
 
 		for(int i = 0; i < relevantEntityList.size(); i ++) {
 			relevantEntityList.get(i).setRank(i + 1);
@@ -63,20 +67,18 @@ public class Ranker {
 
 	//get relevant entity list of an entity list
 	private static List<Entity> getRelevantEntityListByEntity(List<Entity> queryEntityList, boolean isConnected) {
-		Set<Integer> targetEntityIdSet = new HashSet<>();
+		Set<Integer> sourceEntityIdSet = new HashSet<>();
 		if(isConnected) {
 			for(Entity queryEntity : queryEntityList)
-				targetEntityIdSet.addAll(DataUtil.getEntitySet(queryEntity.getId()));
-		}
-		else {
-			targetEntityIdSet = DataUtil.getEntitySet();
+				sourceEntityIdSet.addAll(DataUtil.getSourceEntityIdSet(queryEntity.getId()));
 		}
 
-		return targetEntityIdSet.parallelStream()
+		return DataUtil.getWholeSourceEntityIdList().parallelStream()
+				.filter(targetEntityId -> isConnected ? sourceEntityIdSet.contains(targetEntityId) : true)
 				.map(targetEntityId -> {
 					//important: consider the weight of queryEntity and queryFeature
 					double score = queryEntityList.parallelStream()
-							.map(queryEntity -> Computer.getEmbeddingScore(targetEntityId, queryEntity.getId()) * queryEntity.getScore()/*(DataUtil.getEntitySet(queryEntity.getId()).contains(targetEntityId)) ? Computer.getEmbeddingScore(targetEntityId, queryEntity.getId()) * queryEntity.getScore() : 0.0*/)
+							.map(queryEntity -> Computer.getEmbeddingScore(targetEntityId, queryEntity.getId()) * queryEntity.getScore())
 							.reduce(0.0, (s1, s2) -> (s1 + s2));
 
 					return new Entity(targetEntityId, score);
@@ -86,68 +88,23 @@ public class Ranker {
 
 	//get relevant entity list of a feature list
 	private static List<Entity> getRelevantEntityListByFeature(List<Feature> queryFeatureList, boolean isConnected){
+		Set<Integer> sourceEntityIdSet = new HashSet<>();
 		if(isConnected) {
-			Set<Integer> targetEntityIdSet = new HashSet<>();
-
-			for(Feature queryFeature : queryFeatureList)
-				targetEntityIdSet.addAll(DataUtil.getEntitySet(queryFeature.getEntity().getId(), queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection()));
-
-			return targetEntityIdSet.parallelStream()
-					.map(targetEntityId -> {
-						//important: consider the weight of queryEntity and queryFeature
-						double score = queryFeatureList.parallelStream()
-								.map(queryFeature -> (DataUtil.getEntitySet(queryFeature.getEntity().getId(), queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection()).contains(targetEntityId)) ? Computer.getEmbeddingsScore(targetEntityId, queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection(), queryFeature.getEntity().getId()) * queryFeature.getScore() : 0.0)
-								.reduce(0.0, (s1, s2) -> (s1 + s2));
-
-						return new Entity(targetEntityId, score);
-					})
-					.collect(Collectors.toList());
+			for (Feature queryFeature : queryFeatureList)
+				sourceEntityIdSet.addAll(DataUtil.getTargetEntityIdSet(queryFeature.getEntity().getId(), queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection()));
 		}
-		else {
-			return DataUtil.getEntitySet().parallelStream()
-					.map(targetEntityId -> {
-						//important: consider the weight of queryEntity and queryFeature
-						double score = queryFeatureList.parallelStream()
-								.map(queryFeature -> Computer.getEmbeddingsScore(targetEntityId, queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection(), queryFeature.getEntity().getId()) * queryFeature.getScore())
-								.reduce(0.0, (s1, s2) -> (s1 + s2));
 
-						return new Entity(targetEntityId, score);
-					})
-					.collect(Collectors.toList());
-		}
-	}
+		return DataUtil.getWholeSourceEntityIdList().parallelStream()
+				.filter(targetEntityId -> isConnected ? sourceEntityIdSet.contains(targetEntityId) : true)
+				.map(targetEntityId -> {
+					//important: consider the weight of queryEntity and queryFeature
+					double score = queryFeatureList.parallelStream()
+							.map(queryFeature -> isConnected ? ((DataUtil.getTargetEntityIdSet(queryFeature.getEntity().getId(), queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection()).contains(targetEntityId)) ? Computer.getEmbeddingsScore(targetEntityId, queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection(), queryFeature.getEntity().getId()) * queryFeature.getScore() : 0.0) : Computer.getEmbeddingsScore(targetEntityId, queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection(), queryFeature.getEntity().getId()) * queryFeature.getScore())
+							.reduce(0.0, (s1, s2) -> (s1 + s2));
 
-	//get relevant entity list of a feature list, where the feature has a specific relation
-	private static List<Entity> getRelevantEntityListByFeature(List<Entity> queryEntityList, Relation relation, boolean isConnected){
-		Set<Integer> targetEntityIdSet = new HashSet<>();
-		for(Entity queryEntity : queryEntityList)
-			targetEntityIdSet.addAll(DataUtil.getEntitySet(queryEntity.getId(), relation.getId(), relation.getDirection()));
-
-		if(isConnected) {
-			return targetEntityIdSet.parallelStream()
-					.map(targetEntityId -> {
-						//important: consider the weight of queryEntity and queryFeature
-						double score = queryEntityList.parallelStream()
-								.map(queryEntity -> (DataUtil.getEntitySet(queryEntity.getId(), relation.getId(), relation.getDirection()).contains(targetEntityId)) ? Computer.getEmbeddingsScore(targetEntityId, relation.getId(), relation.getDirection(), queryEntity.getId()) * queryEntity.getScore() : 0.0)
-								.reduce(0.0, (s1, s2) -> (s1 + s2));
-
-						return new Entity(targetEntityId, score);
-					})
-					.collect(Collectors.toList());
-		}
-		else {
-			double[] queryEntityVector = Computer.getAverageEmbedding(queryEntityList);
-
-			return DataUtil.getEntitySet().parallelStream()
-					.filter(targetEntityId -> !targetEntityIdSet.contains(targetEntityId))
-					.map(targetEntityId -> {
-						//important: consider the weight of queryEntity and queryFeature
-						double score =  Computer.getEmbeddingsScore(targetEntityId, relation.getId(), relation.getDirection(), queryEntityVector);
-
-						return new Entity(targetEntityId, score);
-					})
-					.collect(Collectors.toList());
-		}
+					return new Entity(targetEntityId, score);
+				})
+				.collect(Collectors.toList());
 	}
 
 	/*---------------Relevant feature---------------*/
@@ -156,10 +113,6 @@ public class Ranker {
 		List<List<Feature>> relevantFeatureListList = getRelevantRelation(queryEntityList).stream()
 				.map(queryRelation -> getRelevantFeatureList(queryEntityList, queryRelation, isConnected))
 				.collect(Collectors.toList());
-
-		/*relevantFeatureListList.parallelStream()
-				.forEach(featureList -> featureList.parallelStream()
-						.forEach(feature -> Parser.decodeFeature(feature)));*/
 
 		for(int i = 0; i < relevantFeatureListList.size(); i ++) {
 			for(int j = 0; j < relevantFeatureListList.get(i).size(); j ++) {
@@ -180,7 +133,7 @@ public class Ranker {
 				.map(targetEntity -> new Feature(targetEntity, targetRelation, targetEntity.getScore() * targetRelation.getScore()))
 				.collect(Collectors.toList());
 
-		return sortFeatureList(relevantFeatureList);
+		return sortFeatureList(relevantFeatureList, DataUtil.Output_Feature_Size);
 	}
 
 	//get relevant relation of an entity list by accumulating their information gain
@@ -200,7 +153,7 @@ public class Ranker {
 							})
 				);
 
-		List<Relation> relevantRelationList = sortRelationList(new ArrayList<>(relationMap.values()));
+		List<Relation> relevantRelationList = sortRelationList(new ArrayList<>(relationMap.values()), DataUtil.Output_Relation_Size);
 
 		relevantRelationList.parallelStream()
 				.forEach(relation -> relation.setScore(relation.getScore() / queryEntityList.size()));
@@ -229,28 +182,49 @@ public class Ranker {
 			}
 		}
 
-		return sortRelationList(relationList);
+		return sortRelationList(relationList, DataUtil.Output_Relation_Size);
+	}
+
+	//get relevant entity list of a feature list, where the feature has a specific relation
+	private static List<Entity> getRelevantEntityListByFeature(List<Entity> queryEntityList, Relation relation, boolean isConnected){
+		Set<Integer> targetEntityIdSet = new HashSet<>();
+		for(Entity queryEntity : queryEntityList)
+			targetEntityIdSet.addAll(DataUtil.getTargetEntityIdSet(queryEntity.getId(), relation.getId(), relation.getDirection()));
+
+		double[] queryEntityVector = Computer.getAverageEmbedding(queryEntityList);
+
+		return DataUtil.getWholeTargetEntityIdList().parallelStream()
+				.filter(targetEntityId -> isConnected ? targetEntityIdSet.contains(targetEntityId) : !targetEntityIdSet.contains(targetEntityId))
+				.map(targetEntityId -> {
+					//important: consider the weight of queryEntity and queryFeature
+					double score = isConnected ?  queryEntityList.parallelStream()
+							.map(queryEntity -> (DataUtil.getTargetEntityIdSet(queryEntity.getId(), relation.getId(), relation.getDirection()).contains(targetEntityId)) ? Computer.getEmbeddingsScore(targetEntityId, relation.getId(), relation.getDirection(), queryEntity.getId()) * queryEntity.getScore() : 0.0)
+							.reduce(0.0, (s1, s2) -> (s1 + s2)) : Computer.getEmbeddingsScore(targetEntityId, relation.getId(), relation.getDirection(), queryEntityVector);
+
+					return new Entity(targetEntityId, score);
+				})
+				.collect(Collectors.toList());
 	}
 
 	//return top-k
-	private static List<Entity> sortEntityList(List<Entity> entityList) {
+	private static List<Entity> sortEntityList(List<Entity> entityList, int k) {
 		return entityList.parallelStream()
 				.sorted((a, b) -> a.getScore() < b.getScore() ? 1 : -1)
-				.limit(entityList.size() < DataUtil.Output_Entity_Size ? entityList.size() : DataUtil.Output_Entity_Size)
+				.limit(entityList.size() < k ? entityList.size() : k)
 				.collect(Collectors.toList());
 	}
 
-	public static List<Relation> sortRelationList(List<Relation> relationList){
+	public static List<Relation> sortRelationList(List<Relation> relationList, int k){
 		return relationList.parallelStream()
 				.sorted((a, b) -> a.getScore() < b.getScore() ? 1 : -1)
-				.limit(relationList.size() < DataUtil.Output_Relation_Size ? relationList.size() : DataUtil.Output_Relation_Size)
+				.limit(relationList.size() < k ? relationList.size() : k)
 				.collect(Collectors.toList());
 	}
 
-	private static List<Feature> sortFeatureList(List<Feature> featureList){
+	private static List<Feature> sortFeatureList(List<Feature> featureList, int k){
 		return featureList.parallelStream()
 				.sorted((a, b) -> a.getScore() < b.getScore() ? 1 : -1)
-				.limit(featureList.size() < DataUtil.Output_Feature_Size ? featureList.size() : DataUtil.Output_Feature_Size)
+				.limit(featureList.size() < k ? featureList.size() : k)
 				.collect(Collectors.toList());
 	}
 

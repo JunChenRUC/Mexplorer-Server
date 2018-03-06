@@ -133,30 +133,33 @@ public class DataUtil extends HttpServlet {
 		return taskManager.getTaskMap();
 	}
 
-
-	public static Set<Integer> getEntitySet(){
-		return DataUtil.dictionaryManager.getId2Entity().keySet();
+	public static List<Integer> getWholeSourceEntityIdList() {
+		return dictionaryManager.getSourceEntityIdList();
 	}
 
-	public static Set<Integer> getEntitySet(int queryEntityId, int queryRelationId, int queryRelationDirection) {
+	public static List<Integer> getWholeTargetEntityIdList() {
+		return dictionaryManager.getTargetEntityIdList();
+	}
+
+	public static Set<Integer> getTargetEntityIdSet(int queryEntityId, int queryRelationId, int queryRelationDirection) {
 		Set<Integer> entitySet = new HashSet<>();
 
-		if(DataUtil.tripleManager.getDirection2TripleMap().get(queryRelationDirection).containsKey(queryEntityId)) {
-			if(DataUtil.tripleManager.getDirection2TripleMap().get(queryRelationDirection).get(queryEntityId).containsKey(queryRelationId)) {
-				entitySet = DataUtil.tripleManager.getDirection2TripleMap().get(queryRelationDirection).get(queryEntityId).get(queryRelationId);
+		if(tripleManager.getDirection2TripleMap().get(queryRelationDirection).containsKey(queryEntityId)) {
+			if(tripleManager.getDirection2TripleMap().get(queryRelationDirection).get(queryEntityId).containsKey(queryRelationId)) {
+				entitySet = tripleManager.getDirection2TripleMap().get(queryRelationDirection).get(queryEntityId).get(queryRelationId);
 			}
 		}
 
 		return entitySet;
 	}
 
-	public static Set<Integer> getEntitySet(int queryEntityId) {
+	public static Set<Integer> getSourceEntityIdSet(int queryEntityId) {
 		Set<Integer> entitySet = new HashSet<>();
 
 		for(int direction : Directions) {
 			for(Map.Entry<Integer, Set<Integer>> relation2entityEntry : getRelation2EntityMap(queryEntityId, direction).entrySet()) {
 				for(int targetEntityId : relation2entityEntry.getValue()) {
-					entitySet.addAll(getEntitySet(targetEntityId, relation2entityEntry.getKey(), - direction));
+					entitySet.addAll(getTargetEntityIdSet(targetEntityId, relation2entityEntry.getKey(), - direction));
 				}
 			}
 		}

@@ -5,8 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class DictionaryManager {
@@ -14,6 +13,9 @@ public class DictionaryManager {
 	private Map<Integer, String> id2entity = new HashMap<>();
 	private Map<String, Integer> relation2id = new HashMap<>();
 	private Map<Integer, String> id2relation = new HashMap<>();
+
+	private List<Integer> sourceEntityIdList = new ArrayList<>();
+	private List<Integer> targetEntityIdList = new ArrayList<>();
 
 	public DictionaryManager(String inputPath_entity, String inputPath_relation){
 		loadEntity(inputPath_entity);
@@ -32,6 +34,11 @@ public class DictionaryManager {
 
 				entity2id.put(name, Integer.parseInt(tokens[1]));
 				id2entity.put(Integer.parseInt(tokens[1]), name);
+
+				if(Integer.parseInt(tokens[2]) == 0)
+					sourceEntityIdList.add(Integer.parseInt(tokens[1]));
+				else if(Integer.parseInt(tokens[2]) == 1)
+					targetEntityIdList.add(Integer.parseInt(tokens[1]));
 			}
 			reader.close();	
 		} catch (IOException e) {
@@ -72,5 +79,13 @@ public class DictionaryManager {
 	
 	public Map<Integer, String> getId2Relation(){
 		return id2relation;
+	}
+
+	public List<Integer> getSourceEntityIdList() {
+		return sourceEntityIdList;
+	}
+
+	public List<Integer> getTargetEntityIdList() {
+		return targetEntityIdList;
 	}
 }

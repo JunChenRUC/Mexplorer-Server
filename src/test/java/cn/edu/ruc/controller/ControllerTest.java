@@ -44,7 +44,7 @@ public class ControllerTest {
                 {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump_1"}), Arrays.asList(new String[]{})},
                 {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1_1"})},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"Forrest Gump_1", "Apollo 13 (film)_1"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1_1"})},
-                {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1_1", "Gary Sinise##Actor##-1_1"})},
+                {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1_1"})},
         });
     }
 

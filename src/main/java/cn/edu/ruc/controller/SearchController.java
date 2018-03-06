@@ -61,14 +61,14 @@ public class SearchController {
 	//localhost:8080/controller/sendBookmark?userId=test&taskId=1&versionId=1&relevantEntities=Cast Away_1_7000_timestamp__Forrest Gump_Tom Hanks%23%23Actor%23%23-1
 	@ResponseBody
 	@RequestMapping(value="sendBookmark", method=RequestMethod.GET)
-	public void sendBookmark(@RequestParam(value = "userId") String userId, @RequestParam(value = "taskId") String taskId, @RequestParam(value = "taskId") String versionId, @RequestParam(value = "relevantEntities") String[] relevantEntityStringList){
+	public void sendBookmark(@RequestParam(value = "userId") String userId, @RequestParam(value = "taskId") String taskId, @RequestParam(value = "versionId") String versionId, @RequestParam(value = "relevantEntities") String[] relevantEntityStringList){
 		searchService.sendBookmark(userId, taskId, versionId, Arrays.asList(relevantEntityStringList));
 	}
 
 	//localhost:8080/controller/sendInteraction?userId=test&taskId=1&versionId=1&area=query&option=search&content="entity[], feature[]"&timestamp=1000
 	@ResponseBody
 	@RequestMapping(value="sendInteraction", method=RequestMethod.GET)
-	public void sendInteraction(@RequestParam(value = "userId") String userId, @RequestParam(value = "taskId") String taskId, @RequestParam(value = "taskId") String versionId, @RequestParam(value = "area") String area, @RequestParam(value = "option") String option, @RequestParam(value = "content") String content, @RequestParam(value = "timestamp") String timestamp){
+	public void sendInteraction(@RequestParam(value = "userId") String userId, @RequestParam(value = "taskId") String taskId, @RequestParam(value = "versionId") String versionId, @RequestParam(value = "area") String area, @RequestParam(value = "option") String option, @RequestParam(value = "content") String content, @RequestParam(value = "timestamp") String timestamp){
 		searchService.sendInteraction(userId, taskId, versionId, area, option, content, timestamp);
 	}
 }

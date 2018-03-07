@@ -179,18 +179,16 @@ public class DataUtil extends HttpServlet {
 		return taskManager.getTaskMap().get(id);
 	}
 
-	public static Map<Integer, Task> getTaskMap() {
-		return taskManager.getTaskMap();
-	}
-
 	public static int getUserId() {
 		int userId = 0;
 		try {
-			File file = new File(configManager.getValue("dir") + configManager.getValue("file.user.log"));
-			if(!file.exists())
+			File file = new File(configManager.getValue("dir") + configManager.getValue("dir.log") + configManager.getValue("file.user.log"));
+			if(!file.exists()) {
+				new File(configManager.getValue("dir") + configManager.getValue("dir.log")).mkdirs();
 				file.createNewFile();
+			}
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configManager.getValue("dir") + configManager.getValue("file.user.log")), "UTF-8"));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 			String tmpString;
 			while((tmpString = reader.readLine()) != null) {
 				userId ++;
@@ -206,11 +204,7 @@ public class DataUtil extends HttpServlet {
 
 	public static void writeUser(String userId) {
 		try {
-			File file = new File(configManager.getValue("dir") + configManager.getValue("file.user.log"));
-			if(!file.exists())
-				file.createNewFile();
-
-			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(configManager.getValue("dir") + configManager.getValue("dir.log")  + configManager.getValue("file.user.log"), true)));
 
 			printWriter.println(userId);
 
@@ -224,11 +218,7 @@ public class DataUtil extends HttpServlet {
 
 	public static void writeBookmark(String userId, String taskId, String versionId, List<String> relevantEntityStringList) {
 		try {
-			File file = new File(configManager.getValue("dir") + configManager.getValue("file.bookmark.log"));
-			if(!file.exists())
-				file.createNewFile();
-
-			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(configManager.getValue("dir") + configManager.getValue("dir.log")  + configManager.getValue("file.bookmark.log"), true)));
 
 			for(int j = 0 ; j < relevantEntityStringList.size(); j ++) {
 				printWriter.println(userId + "\t" + taskId + "\t" + versionId + "\t" + relevantEntityStringList.get(j));
@@ -244,11 +234,7 @@ public class DataUtil extends HttpServlet {
 
 	public static void writeInteraction(String userId, String taskId, String versionId, String area, String option, String content, String timestamp) {
 		try {
-			File file = new File(configManager.getValue("dir") + configManager.getValue("file.interaction.log"));
-			if(!file.exists())
-				file.createNewFile();
-
-			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(configManager.getValue("dir") + configManager.getValue("dir.log")  + configManager.getValue("file.interaction.log"), true)));
 
 			printWriter.println(userId + "\t" + taskId + "\t" + versionId + "\t" + area + "\t" + option + "\t" + content + "\t" + timestamp + "\t");
 

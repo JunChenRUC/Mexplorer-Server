@@ -4,17 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import cn.edu.ruc.core.DataUtil;
-import cn.edu.ruc.core.Indexer;
+import cn.edu.ruc.core.*;
 import cn.edu.ruc.domain.Entity;
 import cn.edu.ruc.domain.Feature;
 import cn.edu.ruc.domain.Task;
+import cn.edu.ruc.model.Assess;
 import cn.edu.ruc.model.Dropdown;
 import cn.edu.ruc.model.Profile;
 import cn.edu.ruc.model.Query;
 import cn.edu.ruc.service.SearchService;
-import cn.edu.ruc.core.Parser;
-import cn.edu.ruc.core.Ranker;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -62,13 +60,14 @@ public class SearchServiceImp implements SearchService {
 	}
 
 	@Override
-	public Task getTask(int taskId) {
-		return DataUtil.getTask(taskId);
+	public Assess getAssess() {
+		int id = DataUtil.getUserId();
+		return new Assess(Assessor.getTaskList(id), Assessor.getVersionList(id));
 	}
 
 	@Override
-	public Map getTaskMap() {
-		return DataUtil.getTaskMap();
+	public void sendUser(String userId) {
+		DataUtil.writeUser(userId);
 	}
 
 	@Override

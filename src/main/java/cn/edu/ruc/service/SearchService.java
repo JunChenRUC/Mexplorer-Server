@@ -1,6 +1,7 @@
 package cn.edu.ruc.service;
 
 import cn.edu.ruc.domain.Task;
+import cn.edu.ruc.model.Assess;
 import cn.edu.ruc.model.Dropdown;
 import cn.edu.ruc.model.Profile;
 import cn.edu.ruc.model.Query;
@@ -18,11 +19,11 @@ public interface SearchService {
 	//get profile of entity
 	Profile getProfile(String queryEntityString);
 
-	//get task
-	Task getTask(int taskId);
+	//get assess
+	Assess getAssess();
 
-	//get task map
-	Map getTaskMap();
+	//send user
+	void sendUser(String userId);
 
 	//send entity
 	void sendBookmark(String userId, String taskId, String versionId, List<String> relevantEntityStringList);

@@ -27,7 +27,7 @@ public class TaskManager {
             while((tmpString = reader.readLine()) != null) {
                 String[] tokens = tmpString.split("\t");
 
-                taskMap.put(Integer.parseInt(tokens[0]), new Task(tokens[1], Integer.parseInt(tokens[2])));
+                taskMap.put(Integer.parseInt(tokens[0]), new Task(Integer.parseInt(tokens[0]), tokens[1], Integer.parseInt(tokens[2])));
             }
             reader.close();
         } catch (IOException e) {

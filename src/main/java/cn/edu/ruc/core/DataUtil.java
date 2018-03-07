@@ -18,6 +18,9 @@ public class DataUtil extends HttpServlet {
 	public static int Output_Feature_Size;
 	public static int[] Directions;
 
+	public static int Task_Size;
+	public static int Version_Size;
+
 	private static ConfigManager configManager;
 	private static LogManager logManager;
 	private static DictionaryManager dictionaryManager;
@@ -50,6 +53,9 @@ public class DataUtil extends HttpServlet {
 		Output_Relation_Size = Integer.parseInt(configManager.getValue("output.relation.size"));
 		Output_Feature_Size = Integer.parseInt(configManager.getValue("output.feature.size"));
 		Directions = new int[]{Integer.parseInt(configManager.getValue("direction.forward")), Integer.parseInt(configManager.getValue("direction.backward"))};
+
+		Task_Size = Integer.parseInt(configManager.getValue("task.size"));
+		Version_Size = Integer.parseInt(configManager.getValue("version.size"));
 		System.out.println("Parameters are loaded!");
 	}
 
@@ -125,14 +131,6 @@ public class DataUtil extends HttpServlet {
 		return indexManager.getDirectoryReader();
 	}
 
-	public static Task getTask(int id) {
-		return taskManager.getTaskMap().get(id);
-	}
-
-	public static Map<Integer, Task> getTaskMap() {
-		return taskManager.getTaskMap();
-	}
-
 	public static List<Integer> getWholeSourceEntityIdList() {
 		return dictionaryManager.getSourceEntityIdList();
 	}
@@ -175,6 +173,53 @@ public class DataUtil extends HttpServlet {
 		}
 
 		return relation2entityMap;
+	}
+
+	public static Task getTask(int id) {
+		return taskManager.getTaskMap().get(id);
+	}
+
+	public static Map<Integer, Task> getTaskMap() {
+		return taskManager.getTaskMap();
+	}
+
+	public static int getUserId() {
+		int userId = 0;
+		try {
+			File file = new File(configManager.getValue("dir") + configManager.getValue("file.user.log"));
+			if(!file.exists())
+				file.createNewFile();
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configManager.getValue("dir") + configManager.getValue("file.user.log")), "UTF-8"));
+			String tmpString;
+			while((tmpString = reader.readLine()) != null) {
+				userId ++;
+			}
+			reader.close();
+		} catch (IOException e) {
+			System.out.println("Error: load entity description!");
+			e.printStackTrace();
+		}
+
+		return userId;
+	}
+
+	public static void writeUser(String userId) {
+		try {
+			File file = new File(configManager.getValue("dir") + configManager.getValue("file.user.log"));
+			if(!file.exists())
+				file.createNewFile();
+
+			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+
+			printWriter.println(userId);
+
+			printWriter.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void writeBookmark(String userId, String taskId, String versionId, List<String> relevantEntityStringList) {

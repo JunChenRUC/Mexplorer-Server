@@ -5,12 +5,22 @@
 package cn.edu.ruc.domain;
 
 public class Task {
+    private int id;
     private String content;
     private int size;
 
-    public Task(String content, int size) {
+    public Task(int id, String content, int size) {
+        setId(id);
         setContent(content);
         setSize(size);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getContent() {
@@ -32,7 +42,8 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-                "content='" + content + '\'' +
+                "id=" + id +
+                ", content='" + content + '\'' +
                 ", size=" + size +
                 '}';
     }

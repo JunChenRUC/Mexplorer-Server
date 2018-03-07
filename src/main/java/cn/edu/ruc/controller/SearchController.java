@@ -1,6 +1,7 @@
 package cn.edu.ruc.controller;
 
 import cn.edu.ruc.domain.Task;
+import cn.edu.ruc.model.Assess;
 import cn.edu.ruc.model.Dropdown;
 import cn.edu.ruc.model.Profile;
 import cn.edu.ruc.model.Query;
@@ -44,18 +45,18 @@ public class SearchController {
 		return searchService.getQuery(Arrays.asList(queryEntityStringList), Arrays.asList(queryFeatureStringList));
 	}
 
-	//localhost:8080/controller/getTask?taskId=1
+	//localhost:8080/controller/getAssess
 	@ResponseBody
-	@RequestMapping(value = "getTask", method = RequestMethod.GET)
-	public Task getTask(@RequestParam(value = "taskId") int taskId){
-		return searchService.getTask(taskId);
+	@RequestMapping(value = "getAssess", method = RequestMethod.GET)
+	public Assess getAssess(){
+		return searchService.getAssess();
 	}
 
-	//localhost:8080/controller/getTaskMap?
+	//localhost:8080/controller/sendUser?userId=
 	@ResponseBody
-	@RequestMapping(value = "getTaskMap", method = RequestMethod.GET)
-	public Map getTaskMap(){
-		return searchService.getTaskMap();
+	@RequestMapping(value="sendUser", method=RequestMethod.GET)
+	public void sendUser(@RequestParam(value = "userId") String userId){
+		searchService.sendUser(userId);
 	}
 
 	//localhost:8080/controller/sendBookmark?userId=test&taskId=1&versionId=1&relevantEntities=Cast Away_1_7000_timestamp__Forrest Gump_Tom Hanks%23%23Actor%23%23-1

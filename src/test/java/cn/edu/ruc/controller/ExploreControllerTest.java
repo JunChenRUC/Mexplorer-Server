@@ -43,16 +43,21 @@ public class ExploreControllerTest {
     @Parameterized.Parameters
     public static List<Object> getParameters() {
         return Arrays.asList(new Object[][]{
-                {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 1},
+                /*{"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 1},
                 {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 2},
                 {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 3},
                 {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1"}), 1},
-                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Sally Field##Actor##-1"}), 2},
-                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Sally Field##Actor##-1"}), 3},
+                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1"}), 2},
+                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1"}), 3},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 1},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 2},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 3},
-                {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Best Film, London Film Festival winners##Subject##-1"}), 3},
+                {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Best Film, London Film Festival winners##Subject##-1"}), 3}*/
+                {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Luc Besson##Director##-1"}), 3},
+                {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Jackie Chan##Actor##-1"}), 3},
+                {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Comedy##Genre##-1"}), 3},
+                {"", "", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 3},
+                {"", "", Arrays.asList(new String[]{"Rain Man"}), Arrays.asList(new String[]{}), 3}
         });
     }
 
@@ -91,7 +96,6 @@ public class ExploreControllerTest {
         searchService.getDropdown(keywords);
     }
 
-
     /**
      *
      * Method: getQuery(@RequestParam(required = false, value = "entities") String[] entityStringList, @RequestParam(required = false, value = "features") String[] featureStringList)
@@ -103,7 +107,6 @@ public class ExploreControllerTest {
 
         searchService.getQuery(entityStringList, featureStringList);
     }
-
 
     /**
      *

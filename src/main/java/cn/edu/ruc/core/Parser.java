@@ -5,14 +5,19 @@ import cn.edu.ruc.domain.Entity;
 import cn.edu.ruc.domain.Feature;
 import cn.edu.ruc.domain.Relation;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
     //important: pay attention to the strings such ""
     public static Entity encodeSource(String entityString) {
-        if(entityString.contains("_"))
-            entityString = entityString.replaceAll("_", ",");
+        try {
+            entityString = URLDecoder.decode(entityString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return DataUtil.getSource2Id(entityString) == -1 ? null : new Entity(DataUtil.getSource2Id(entityString), entityString);
     }
 
@@ -36,8 +41,6 @@ public class Parser {
     }
 
     public static Entity encodeTarget(String entityString) {
-        if(entityString.contains("_"))
-            entityString = entityString.replaceAll("_", ",");
         return DataUtil.getTarget2Id(entityString) == -1 ? null : new Entity(DataUtil.getTarget2Id(entityString), entityString);
     }
 
@@ -46,6 +49,12 @@ public class Parser {
     }
 
     public static Feature encodeFeature(String featureString) {
+        try {
+            featureString = URLDecoder.decode(featureString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
         String[] tokens = featureString.split("##");
         String entityString = tokens[0];
         String relationString = tokens[1];

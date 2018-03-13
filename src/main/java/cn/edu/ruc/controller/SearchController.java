@@ -1,6 +1,5 @@
 package cn.edu.ruc.controller;
 
-import cn.edu.ruc.domain.Task;
 import cn.edu.ruc.model.Assess;
 import cn.edu.ruc.model.Dropdown;
 import cn.edu.ruc.model.Profile;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Map;
 
 
 @Controller

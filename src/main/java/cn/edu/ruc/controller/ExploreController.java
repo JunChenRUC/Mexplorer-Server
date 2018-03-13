@@ -24,6 +24,7 @@ public class ExploreController {
 	@ResponseBody
 	@RequestMapping(value="getResult", method=RequestMethod.GET)
 	public Result getResultEntityList(@RequestParam(value = "versionId") int versionId, @RequestParam(required = false, value = "queryEntities") String[] queryEntityStringList, @RequestParam(required = false, value = "queryFeatures") String[] queryFeatureStringList){
+		System.out.println(versionId + "\t" + queryEntityStringList[0] + "\t" + queryFeatureStringList[0]);
 		return exploreService.getResult(versionId, Arrays.asList(queryEntityStringList), Arrays.asList(queryFeatureStringList));
 	}
 }

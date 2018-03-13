@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ExploreService {
 	//get recommendation
-	Result getResult(Query query);
+	Result getResult(int versionId, List<String> queryEntityStringList, List<String> queryFeatureStringList);
 }

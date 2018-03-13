@@ -20,10 +20,10 @@ public class ExploreController {
 	@Autowired
 	ExploreService exploreService;
 
-	//localhost:8080/controller/getResult?queryEntities=Forrest Gump_1&queryFeatures=Tom Hanks%23%23Actor%23%23-1_1
+	//localhost:8080/controller/getResult?versionId=1&queryEntities=Forrest Gump&queryFeatures=Tom Hanks%23%23Actor%23%23-1
 	@ResponseBody
 	@RequestMapping(value="getResult", method=RequestMethod.GET)
-	public Result getResultEntityList(@RequestParam(required = false, value = "queryEntities") String[] queryEntityStringList, @RequestParam(required = false, value = "queryFeatures") String[] queryFeatureStringList){
-		return exploreService.getResult(searchService.getQuery(Arrays.asList(queryEntityStringList), Arrays.asList(queryFeatureStringList)));
+	public Result getResultEntityList(@RequestParam(value = "versionId") int versionId, @RequestParam(required = false, value = "queryEntities") String[] queryEntityStringList, @RequestParam(required = false, value = "queryFeatures") String[] queryFeatureStringList){
+		return exploreService.getResult(versionId, Arrays.asList(queryEntityStringList), Arrays.asList(queryFeatureStringList));
 	}
 }

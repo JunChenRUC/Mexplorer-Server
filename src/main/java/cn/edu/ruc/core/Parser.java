@@ -10,16 +10,18 @@ import java.util.List;
 
 public class Parser {
     //important: pay attention to the strings such ""
-    public static Entity encodeEntity(String entityString) {
-        return DataUtil.getEntity2Id(entityString) == -1 ? null : new Entity(DataUtil.getEntity2Id(entityString), entityString);
+    public static Entity encodeSource(String entityString) {
+        if(entityString.contains("_"))
+            entityString = entityString.replaceAll("_", ",");
+        return DataUtil.getSource2Id(entityString) == -1 ? null : new Entity(DataUtil.getSource2Id(entityString), entityString);
     }
 
-    public static List<Entity> encodeEntityList(List<String> entityStringList) {
+    public static List<Entity> encodeSourceList(List<String> entityStringList) {
         List<Entity> entityList = new ArrayList<>();
 
         for(String entityString : entityStringList) {
             String[] tokens = entityString.split("_");
-            Entity entity = Parser.encodeEntity(tokens[0]);
+            Entity entity = Parser.encodeSource(tokens[0]);
 
             if(entity != null && tokens.length == 2) {
                 entity.setScore(Double.parseDouble(tokens[1]));
@@ -33,6 +35,12 @@ public class Parser {
         return entityList;
     }
 
+    public static Entity encodeTarget(String entityString) {
+        if(entityString.contains("_"))
+            entityString = entityString.replaceAll("_", ",");
+        return DataUtil.getTarget2Id(entityString) == -1 ? null : new Entity(DataUtil.getTarget2Id(entityString), entityString);
+    }
+
     public static Relation encodeRelation(String relationString, int direction) {
         return DataUtil.getRelation2Id(relationString) == -1 ? null : new Relation(DataUtil.getRelation2Id(relationString), direction, relationString);
     }
@@ -43,7 +51,7 @@ public class Parser {
         String relationString = tokens[1];
         int relationDirection = (tokens.length == 3) ? Integer.parseInt(tokens[2]) : -1;
 
-        Entity entity = encodeEntity(entityString);
+        Entity entity = encodeTarget(entityString);
         Relation relation = encodeRelation(relationString, relationDirection);
 
         return entity != null && relation != null ? new Feature(entity, relation) : null;
@@ -69,9 +77,15 @@ public class Parser {
     }
 
     //decode
-    public static void decodeEntity(Entity entity){
+    public static void decodeSource(Entity entity){
         if(entity != null) {
-            entity.setName(DataUtil.getId2Entity(entity.getId()));
+            entity.setName(DataUtil.getId2Source(entity.getId()));
+        }
+    }
+
+    public static void decodeTarget(Entity entity){
+        if(entity != null) {
+            entity.setName(DataUtil.getId2Target(entity.getId()));
         }
     }
 
@@ -83,14 +97,14 @@ public class Parser {
 
     public static void decodeFeature(Feature feature){
         if(feature != null) {
-            decodeEntity(feature.getEntity());
+            decodeTarget(feature.getEntity());
             decodeRelation(feature.getRelation());
         }
     }
 
     public static void decodeDescription(Entity entity){
         if(entity != null) {
-            entity.setDescription(new Description(DataUtil.getEntity2Plot(entity.getId()), DataUtil.getEntity2Image(entity.getId()), DataUtil.getEntity2Rating(entity.getId())));
+            entity.setDescription(new Description(DataUtil.getPlot(entity.getId()), DataUtil.getImage(entity.getId()), DataUtil.getRating(entity.getId())));
         }
     }
 }

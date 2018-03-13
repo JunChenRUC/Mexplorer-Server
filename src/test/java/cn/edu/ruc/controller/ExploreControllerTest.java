@@ -24,7 +24,7 @@ import java.util.List;
 * @version 1.0 
 */
 @RunWith(Parameterized.class)
-public class ControllerTest {
+public class ExploreControllerTest {
     private static DataUtil dataUtil;
     private static SearchService searchService;
     private static ExploreService exploreService;
@@ -37,14 +37,22 @@ public class ControllerTest {
     public List<String> entityStringList;
     @Parameterized.Parameter(3)
     public List<String> featureStringList;
+    @Parameterized.Parameter(4)
+    public int versionId;
 
     @Parameterized.Parameters
     public static List<Object> getParameters() {
         return Arrays.asList(new Object[][]{
-                {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump_1"}), Arrays.asList(new String[]{})},
-                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1_1"})},
-                {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"Forrest Gump_1", "Apollo 13 (film)_1"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1_1"})},
-                {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1_1"})},
+                {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 1},
+                {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 2},
+                {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 3},
+                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1"}), 1},
+                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Sally Field##Actor##-1"}), 2},
+                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Sally Field##Actor##-1"}), 3},
+                {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 1},
+                {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 2},
+                {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 3},
+                {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Best Film, London Film Festival winners##Subject##-1"}), 3},
         });
     }
 
@@ -70,6 +78,7 @@ public class ControllerTest {
     public void after() throws Exception {
         System.out.println("@After");
     }
+
     /**
      *
      * Method: getDropdown(@RequestParam("keywords") String keywords)
@@ -118,6 +127,6 @@ public class ControllerTest {
     public void testGetResult() throws Exception {
         System.out.println("@Test(getResult(@RequestParam(required = false, value = \"entities\") String[] entityStringList, @RequestParam(required = false, value = \"features\") String[] featureStringList))");
 
-        exploreService.getResult(searchService.getQuery(entityStringList, featureStringList));
+        exploreService.getResult(versionId, entityStringList, featureStringList);
     }
 } 

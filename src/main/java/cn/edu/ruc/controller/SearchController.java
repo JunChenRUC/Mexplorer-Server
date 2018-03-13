@@ -36,8 +36,7 @@ public class SearchController {
 		return searchService.getProfile(queryEntityString);
 	}
 
-	//localhost:8080/controller/getQuery?queryEntities=Forrest Gump_1&queryFeatures=Tom Hanks%23%23Actor%23%23-1_1
-	//an element of the query is composed of an entity (or a feature) and the weight via "_"
+	//localhost:8080/controller/getQuery?queryEntities=Forrest Gump&queryFeatures=Tom Hanks%23%23Actor%23%23-1
 	//a feature is composed of an entity, a relation and a direction via ## (should be transferred to %23%23)
 	@ResponseBody
 	@RequestMapping(value = "getQuery", method = RequestMethod.GET)
@@ -62,14 +61,14 @@ public class SearchController {
 	//localhost:8080/controller/sendBookmark?userId=test&taskId=1&versionId=1&relevantEntities=Cast Away_1_7000_timestamp__Forrest Gump_Tom Hanks%23%23Actor%23%23-1
 	@ResponseBody
 	@RequestMapping(value="sendBookmark", method=RequestMethod.GET)
-	public void sendBookmark(@RequestParam(value = "userId") String userId, @RequestParam(value = "taskId") String taskId, @RequestParam(value = "versionId") String versionId, @RequestParam(value = "relevantEntities") String[] relevantEntityStringList){
+	public void sendBookmark(@RequestParam(value = "userId") String userId, @RequestParam(value = "taskId") int taskId, @RequestParam(value = "versionId") int versionId, @RequestParam(value = "relevantEntities") String[] relevantEntityStringList){
 		searchService.sendBookmark(userId, taskId, versionId, Arrays.asList(relevantEntityStringList));
 	}
 
 	//localhost:8080/controller/sendInteraction?userId=test&taskId=1&versionId=1&area=query&option=search&content="entity[], feature[]"&timestamp=1000
 	@ResponseBody
 	@RequestMapping(value="sendInteraction", method=RequestMethod.GET)
-	public void sendInteraction(@RequestParam(value = "userId") String userId, @RequestParam(value = "taskId") String taskId, @RequestParam(value = "versionId") String versionId, @RequestParam(value = "area") String area, @RequestParam(value = "option") String option, @RequestParam(value = "content") String content, @RequestParam(value = "timestamp") String timestamp){
+	public void sendInteraction(@RequestParam(value = "userId") String userId, @RequestParam(value = "taskId") int taskId, @RequestParam(value = "versionId") int versionId, @RequestParam(value = "area") String area, @RequestParam(value = "option") String option, @RequestParam(value = "content") String content, @RequestParam(value = "timestamp") String timestamp){
 		searchService.sendInteraction(userId, taskId, versionId, area, option, content, timestamp);
 	}
 }

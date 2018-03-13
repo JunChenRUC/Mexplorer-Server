@@ -32,7 +32,7 @@ public class SearchServiceImp implements SearchService {
 	public Query getQuery(List<String> queryEntityStringList, List<String> queryFeatureStringList) {
 		long time = System.currentTimeMillis();
 
-		List<Entity> queryEntityList = Parser.encodeEntityList(queryEntityStringList);
+		List<Entity> queryEntityList = Parser.encodeSourceList(queryEntityStringList);
 		List<Feature> queryFeatureList = Parser.encodeFeatureList(queryFeatureStringList);
 
 		Query query = new Query(queryEntityList, queryFeatureList);
@@ -46,7 +46,7 @@ public class SearchServiceImp implements SearchService {
 	public Profile getProfile(String queryEntityString) {
 		long time = System.currentTimeMillis();
 
-		Entity queryEntity = Parser.encodeEntity(queryEntityString);
+		Entity queryEntity = Parser.encodeSource(queryEntityString);
 
 		Parser.decodeDescription(queryEntity);
 
@@ -62,7 +62,12 @@ public class SearchServiceImp implements SearchService {
 	@Override
 	public Assess getAssess() {
 		int id = DataUtil.getUserId();
-		return new Assess(Assessor.getTaskList(id), Assessor.getVersionList(id));
+		return new Assess(Assessor.getTaskList(id));
+	}
+
+	@Override
+	public Assess getAssess(int id) {
+		return new Assess(Assessor.getTaskList(id));
 	}
 
 	@Override
@@ -71,12 +76,12 @@ public class SearchServiceImp implements SearchService {
 	}
 
 	@Override
-	public void sendBookmark(String userId, String taskId, String versionId, List<String> relevantEntityStringList) {
+	public void sendBookmark(String userId, int taskId, int versionId, List<String> relevantEntityStringList) {
 		DataUtil.writeBookmark(userId, taskId, versionId, relevantEntityStringList);
 	}
 
 	@Override
-	public void sendInteraction(String userId, String taskId, String versionId, String area, String option, String content, String timestamp) {
+	public void sendInteraction(String userId, int taskId, int versionId, String area, String option, String content, String timestamp) {
 		DataUtil.writeInteraction(userId, taskId, versionId, area, option, content, timestamp);
 	}
 }

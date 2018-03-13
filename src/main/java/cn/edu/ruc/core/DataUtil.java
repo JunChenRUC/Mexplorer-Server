@@ -91,12 +91,20 @@ public class DataUtil extends HttpServlet {
 		return logManager;
 	}
 
-	public static String getId2Entity(int id){
-		return dictionaryManager.getId2Entity().get(id);
+	public static String getId2Source(int id){
+		return dictionaryManager.getId2Source().get(id);
 	}
 
-	public static int getEntity2Id(String name){
-		return dictionaryManager.getEntity2Id().containsKey(name) ? dictionaryManager.getEntity2Id().get(name) : -1;
+	public static int getSource2Id(String name){
+		return dictionaryManager.getSource2Id().containsKey(name) ? dictionaryManager.getSource2Id().get(name) : -1;
+	}
+
+	public static String getId2Target(int id){
+		return dictionaryManager.getId2Target().get(id);
+	}
+
+	public static int getTarget2Id(String name){
+		return dictionaryManager.getTarget2Id().containsKey(name) ? dictionaryManager.getTarget2Id().get(name) : -1;
 	}
 
 	public static String getId2Relation(int id){
@@ -115,31 +123,35 @@ public class DataUtil extends HttpServlet {
 		return vectorManager.getRelation2Vector().get(id);
 	}
 
-	public static String getEntity2Plot(int id) {
-		return descriptionManager.getEntity2Plot().containsKey(id) ? descriptionManager.getEntity2Plot().get(id) : "";
+	public static String getPlot(int id) {
+		return descriptionManager.getId2Plot().containsKey(id) ? descriptionManager.getId2Plot().get(id) : "";
 	}
 
-	public static String getEntity2Image(int id) {
-		return descriptionManager.getEntity2Image().containsKey(id) ? descriptionManager.getEntity2Image().get(id) : "";
+	public static String getImage(int id) {
+		return descriptionManager.getId2Image().containsKey(id) ? descriptionManager.getId2Image().get(id) : "";
 	}
 
-	public static String getEntity2Rating(int id) {
-		return descriptionManager.getEntity2Rating().containsKey(id) ? descriptionManager.getEntity2Rating().get(id) : "";
+	public static String getRating(int id) {
+		return descriptionManager.getId2Rating().containsKey(id) ? descriptionManager.getId2Rating().get(id) : "";
+	}
+
+	public static boolean hasDescription(int id) {
+		return descriptionManager.getIdSet().contains(id) ? true : false;
 	}
 
 	public static DirectoryReader getDirectoryReader(){
 		return indexManager.getDirectoryReader();
 	}
 
-	public static List<Integer> getWholeSourceEntityIdList() {
-		return dictionaryManager.getSourceEntityIdList();
+	public static Set<Integer> getWholeSourceIdSet() {
+		return dictionaryManager.getId2Source().keySet();
 	}
 
-	public static List<Integer> getWholeTargetEntityIdList() {
-		return dictionaryManager.getTargetEntityIdList();
+	public static Set<Integer> getWholeTargetIdSet() {
+		return dictionaryManager.getId2Target().keySet();
 	}
 
-	public static Set<Integer> getTargetEntityIdSet(int queryEntityId, int queryRelationId, int queryRelationDirection) {
+	public static Set<Integer> getSourceIdSet(int queryEntityId, int queryRelationId, int queryRelationDirection) {
 		Set<Integer> entitySet = new HashSet<>();
 
 		if(tripleManager.getDirection2TripleMap().get(queryRelationDirection).containsKey(queryEntityId)) {
@@ -151,13 +163,25 @@ public class DataUtil extends HttpServlet {
 		return entitySet;
 	}
 
-	public static Set<Integer> getSourceEntityIdSet(int queryEntityId) {
+	public static Set<Integer> getTargetIdSet(int queryEntityId, int queryRelationId, int queryRelationDirection) {
+		Set<Integer> entitySet = new HashSet<>();
+
+		if(tripleManager.getDirection2TripleMap().get(queryRelationDirection).containsKey(queryEntityId)) {
+			if(tripleManager.getDirection2TripleMap().get(queryRelationDirection).get(queryEntityId).containsKey(queryRelationId)) {
+				entitySet = tripleManager.getDirection2TripleMap().get(queryRelationDirection).get(queryEntityId).get(queryRelationId);
+			}
+		}
+
+		return entitySet;
+	}
+
+	public static Set<Integer> getSourceIdSet(int queryEntityId) {
 		Set<Integer> entitySet = new HashSet<>();
 
 		for(int direction : Directions) {
-			for(Map.Entry<Integer, Set<Integer>> relation2entityEntry : getRelation2EntityMap(queryEntityId, direction).entrySet()) {
+			for(Map.Entry<Integer, Set<Integer>> relation2entityEntry : getRelation2TargetMap(queryEntityId, direction).entrySet()) {
 				for(int targetEntityId : relation2entityEntry.getValue()) {
-					entitySet.addAll(getTargetEntityIdSet(targetEntityId, relation2entityEntry.getKey(), - direction));
+					entitySet.addAll(getTargetIdSet(targetEntityId, relation2entityEntry.getKey(), - direction));
 				}
 			}
 		}
@@ -165,7 +189,7 @@ public class DataUtil extends HttpServlet {
 		return entitySet;
 	}
 
-	public static Map<Integer, Set<Integer>> getRelation2EntityMap(int queryEntityId, int direction) {
+	public static Map<Integer, Set<Integer>> getRelation2TargetMap(int queryEntityId, int direction) {
 		Map<Integer, Set<Integer>> relation2entityMap = new HashMap<>();
 
 		if(DataUtil.tripleManager.getDirection2TripleMap().get(direction).containsKey(queryEntityId)) {
@@ -216,7 +240,7 @@ public class DataUtil extends HttpServlet {
 		}
 	}
 
-	public static void writeBookmark(String userId, String taskId, String versionId, List<String> relevantEntityStringList) {
+	public static void writeBookmark(String userId, int taskId, int versionId, List<String> relevantEntityStringList) {
 		try {
 			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(configManager.getValue("dir") + configManager.getValue("dir.log")  + configManager.getValue("file.bookmark.log"), true)));
 
@@ -232,7 +256,7 @@ public class DataUtil extends HttpServlet {
 		}
 	}
 
-	public static void writeInteraction(String userId, String taskId, String versionId, String area, String option, String content, String timestamp) {
+	public static void writeInteraction(String userId, int taskId, int versionId, String area, String option, String content, String timestamp) {
 		try {
 			PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(configManager.getValue("dir") + configManager.getValue("dir.log")  + configManager.getValue("file.interaction.log"), true)));
 

@@ -19,10 +19,10 @@ public class IndexManager {
 	private DirectoryReader directoryReader = null;
 	
 	public IndexManager(String inputPath, String outputPath){
-		buildIndex(inputPath, outputPath);
+		buildIndexForFeature(inputPath, outputPath);
 	}
 	
-	public void buildIndex(String inputPath, String outputPath){
+	public void buildIndexForFeature(String inputPath, String outputPath){
 		if(!new File(outputPath).isDirectory()) {
 			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(new StandardAnalyzer());
 			indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -35,8 +35,11 @@ public class IndexManager {
 
 				String tmpString;
 				while((tmpString = reader.readLine()) != null){
-					if(tmpString.contains("##")) {
-						indexWriter.addDocument(createEntity(tmpString));
+					if(!tmpString.contains("##")) {
+						indexWriter.addDocument(createDocument(tmpString, 1));
+					}
+					else {
+						indexWriter.addDocument(createDocument(tmpString, 2));
 					}
 				}
 
@@ -54,15 +57,21 @@ public class IndexManager {
 			e.printStackTrace();
 		}
 	}
-	
-	public Document createEntity(String tmpString) throws IOException{
-    	Document document = new Document();
-    	
-    	String name = URLDecoder.decode(tmpString, "UTF-8");
-    	document.add(new Field("name", name.replaceAll("_", " "), TextField.TYPE_STORED));
-    	document.add(new Field("context", getReplaceName(name), TextField.TYPE_STORED));
-    	
-    	return document;
+
+	public Document createDocument(String tmpString, int type) throws IOException{
+		Document document = new Document();
+
+		String name = URLDecoder.decode(tmpString, "UTF-8");
+		if(type == 1) {
+			document.add(new Field("name", name.replaceAll("_", " "), TextField.TYPE_STORED));
+			document.add(new Field("entity", getReplaceName(name), TextField.TYPE_STORED));
+		}
+		else if(type == 2) {
+			document.add(new Field("name", name.replaceAll("_", " "), TextField.TYPE_STORED));
+			document.add(new Field("feature", getReplaceName(name), TextField.TYPE_STORED));
+		}
+
+		return document;
 	}
 
 	private String getReplaceName(String name){
@@ -78,23 +87,6 @@ public class IndexManager {
 
 		return sb.toString().replaceAll("_", " ").replaceAll("##", " ").replaceAll("Category:", "");
 	}
-	
-	public void showIndex(String inputPath) {  
-        System.out.println("*****************Read index**********************");
-		try {
-			int docLength = directoryReader.maxDoc();  
-			Document document;
-			 for (int i = 0; i < docLength; i++) { 
-				document = directoryReader.document(i);
-				System.out.println("No. " + (i + 1) + "\tid: " + document.get("id") + "\tname: " + document.get("name") + "\tcontext: " + document.get("context"));
-			 }
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        System.out.println("*****************Finish**********************\n");  
-    } 
 	
 	public DirectoryReader getDirectoryReader() {
 		return directoryReader;

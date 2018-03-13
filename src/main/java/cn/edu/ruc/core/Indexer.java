@@ -22,12 +22,16 @@ public class Indexer {
 
         IndexSearcher searcher = new IndexSearcher(DataUtil.getDirectoryReader());
 
-
-        QueryParser parser_context = new QueryParser("context", new StandardAnalyzer());
-        Query query_context;
+        QueryParser parser_entity = new QueryParser("entity", new StandardAnalyzer());
+        QueryParser parser_feature = new QueryParser("feature", new StandardAnalyzer());
         try {
-            query_context = parser_context.parse(keywords);
-            for (ScoreDoc scoreDoc : searcher.search(query_context, DataUtil.Output_Auto_Size).scoreDocs){
+            Query query_entity = parser_entity.parse(keywords);
+            for (ScoreDoc scoreDoc : searcher.search(query_entity, DataUtil.Output_Auto_Size / 2).scoreDocs){
+                Document document = searcher.doc(scoreDoc.doc);
+                matchingList.add(document.get("name"));
+            }
+            Query query_feature = parser_feature.parse(keywords);
+            for (ScoreDoc scoreDoc : searcher.search(query_feature, DataUtil.Output_Auto_Size / 2 < (DataUtil.Output_Auto_Size - matchingList.size()) ? (DataUtil.Output_Auto_Size - matchingList.size()) : DataUtil.Output_Auto_Size / 2).scoreDocs){
                 Document document = searcher.doc(scoreDoc.doc);
                 matchingList.add(document.get("name"));
             }

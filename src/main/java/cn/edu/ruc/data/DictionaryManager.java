@@ -9,13 +9,12 @@ import java.util.*;
 
 
 public class DictionaryManager {
-	private Map<String, Integer> entity2id = new HashMap<>();
-	private Map<Integer, String> id2entity = new HashMap<>();
+	private Map<String, Integer> source2id = new HashMap<>();
+	private Map<Integer, String> id2source = new HashMap<>();
+	private Map<String, Integer> target2id = new HashMap<>();
+	private Map<Integer, String> id2target = new HashMap<>();
 	private Map<String, Integer> relation2id = new HashMap<>();
 	private Map<Integer, String> id2relation = new HashMap<>();
-
-	private List<Integer> sourceEntityIdList = new ArrayList<>();
-	private List<Integer> targetEntityIdList = new ArrayList<>();
 
 	public DictionaryManager(String inputPath_entity, String inputPath_relation){
 		loadEntity(inputPath_entity);
@@ -32,13 +31,14 @@ public class DictionaryManager {
 
 				String name = URLDecoder.decode(tokens[0].replaceAll("_", " "), "UTF-8");
 
-				entity2id.put(name, Integer.parseInt(tokens[1]));
-				id2entity.put(Integer.parseInt(tokens[1]), name);
-
-				if(Integer.parseInt(tokens[2]) == 0)
-					sourceEntityIdList.add(Integer.parseInt(tokens[1]));
-				else if(Integer.parseInt(tokens[2]) == 1)
-					targetEntityIdList.add(Integer.parseInt(tokens[1]));
+				if(Integer.parseInt(tokens[2]) == 0) {
+					source2id.put(name, Integer.parseInt(tokens[1]));
+					id2source.put(Integer.parseInt(tokens[1]), name);
+				}
+				else if(Integer.parseInt(tokens[2]) == 1) {
+					target2id.put(name, Integer.parseInt(tokens[1]));
+					id2target.put(Integer.parseInt(tokens[1]), name);
+				}
 			}
 			reader.close();	
 		} catch (IOException e) {
@@ -65,27 +65,27 @@ public class DictionaryManager {
 		}
 	}
 	
-	public Map<String, Integer> getEntity2Id(){
-		return entity2id;
+	public Map<String, Integer> getSource2Id(){
+		return source2id;
 	}
-	
+
+	public Map<String, Integer> getTarget2Id(){
+		return target2id;
+	}
+
 	public Map<String, Integer> getRelation2Id(){
 		return relation2id;
 	}
 
-	public Map<Integer, String> getId2Entity(){
-		return id2entity;
+	public Map<Integer, String> getId2Source(){
+		return id2source;
+	}
+
+	public Map<Integer, String> getId2Target(){
+		return id2target;
 	}
 	
 	public Map<Integer, String> getId2Relation(){
 		return id2relation;
-	}
-
-	public List<Integer> getSourceEntityIdList() {
-		return sourceEntityIdList;
-	}
-
-	public List<Integer> getTargetEntityIdList() {
-		return targetEntityIdList;
 	}
 }

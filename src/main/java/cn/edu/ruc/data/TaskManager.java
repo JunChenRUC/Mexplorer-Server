@@ -27,11 +27,10 @@ public class TaskManager {
             while((tmpString = reader.readLine()) != null) {
                 String[] tokens = tmpString.split("\t");
 
-                taskMap.put(Integer.parseInt(tokens[0]), new Task(Integer.parseInt(tokens[0]), tokens[1], Integer.parseInt(tokens[2])));
+                taskMap.put(Integer.parseInt(tokens[0]), new Task(Integer.parseInt(tokens[0]), tokens[1], tokens[2], Integer.parseInt(tokens[3])));
             }
             reader.close();
         } catch (IOException e) {
-            System.out.println("Error: load entity description!");
             e.printStackTrace();
         }
     }

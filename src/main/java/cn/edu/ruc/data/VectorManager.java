@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class VectorManager {
 	public Map<Integer, double[]> entity2vector = new HashMap<>();
 	public Map<Integer, double[]> relation2vector = new HashMap<>();
@@ -24,7 +23,7 @@ public class VectorManager {
 			String tmpString;
 			int count = 0;
 			while((tmpString = reader.readLine()) != null) {
-				if(dictionaryManager.getId2Entity().containsKey(count)){
+				if(dictionaryManager.getId2Source().containsKey(count) || dictionaryManager.getId2Target().containsKey(count)){
 					entity2vector.put(count, new double[Integer.parseInt(dimension)]);
 					String[] tokens = tmpString.split("\t");
 					for(int i = 0; i < tokens.length; i++)

@@ -28,9 +28,9 @@ public class TripleManager {
             	String predicate = URLDecoder.decode(tokens[1], "UTF-8").replaceAll("_", " ");
             	String object = URLDecoder.decode(tokens[2], "UTF-8").replaceAll("_", " ");
 
-            	int subjectId = dictionary.getEntity2Id().get(subject);
+            	int subjectId = dictionary.getSource2Id().get(subject);
             	int predicateId = dictionary.getRelation2Id().get(predicate);
-            	int objectId = dictionary.getEntity2Id().get(object);
+            	int objectId = dictionary.getTarget2Id().get(object);
 
             	for (int direction : new int[]{1, -1}){
             		if(!direction2tripleMap.containsKey(direction))

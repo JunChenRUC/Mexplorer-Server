@@ -22,14 +22,15 @@ public interface SearchService {
 	//get assess
 	Assess getAssess();
 
+	//get assess
+	Assess getAssess(int id);
+
 	//send user
 	void sendUser(String userId);
 
 	//send entity
-	void sendBookmark(String userId, String taskId, String versionId, List<String> relevantEntityStringList);
+	void sendBookmark(String userId, int taskId, int versionId, List<String> relevantEntityStringList);
 
 	//send interaction
-	void sendInteraction(String userId, String taskId, String versionId, String area, String option, String content, String timestamp);
-
-
+	void sendInteraction(String userId, int taskId, int versionId, String area, String option, String content, String timestamp);
 }

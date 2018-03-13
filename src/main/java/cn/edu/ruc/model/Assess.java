@@ -10,11 +10,9 @@ import java.util.List;
 
 public class Assess {
     private List<Task> taskList;
-    private List<Integer> versionList;
 
-    public Assess(List<Task> taskList, List<Integer> versionList) {
+    public Assess(List<Task> taskList) {
         setTaskList(taskList);
-        setVersionList(versionList);
     }
 
     public List<Task> getTaskList() {
@@ -25,19 +23,10 @@ public class Assess {
         this.taskList = taskList;
     }
 
-    public List<Integer> getVersionList() {
-        return versionList;
-    }
-
-    public void setVersionList(List<Integer> versionList) {
-        this.versionList = versionList;
-    }
-
     @Override
     public String toString() {
         return "Assess{" +
-                "taskList=" + taskList +
-                ", versionList=" + versionList +
+                "\n\ttaskList=" + taskList +
                 '}';
     }
 }

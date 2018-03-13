@@ -6,11 +6,14 @@ package cn.edu.ruc.domain;
 
 public class Task {
     private int id;
+    private String description;
     private String content;
     private int size;
+    private int versionId;
 
-    public Task(int id, String content, int size) {
+    public Task(int id, String description, String content, int size) {
         setId(id);
+        setDescription(description);
         setContent(content);
         setSize(size);
     }
@@ -21,6 +24,14 @@ public class Task {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getContent() {
@@ -39,12 +50,22 @@ public class Task {
         this.size = size;
     }
 
+    public int getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(int versionId) {
+        this.versionId = versionId;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
                 "id=" + id +
+                ", description='" + description + '\'' +
                 ", content='" + content + '\'' +
                 ", size=" + size +
+                ", versionId=" + versionId +
                 '}';
     }
 }

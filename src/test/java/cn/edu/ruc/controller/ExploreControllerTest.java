@@ -56,6 +56,7 @@ public class ExploreControllerTest {
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Luc Besson##Director##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Jackie Chan##Actor##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Comedy##Genre##-1"}), 3},
+                {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"War##Genre##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 3},
                 {"", "", Arrays.asList(new String[]{"Rain Man"}), Arrays.asList(new String[]{}), 3}
         });

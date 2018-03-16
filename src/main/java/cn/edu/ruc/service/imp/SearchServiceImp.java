@@ -2,12 +2,10 @@ package cn.edu.ruc.service.imp;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import cn.edu.ruc.core.*;
 import cn.edu.ruc.domain.Entity;
 import cn.edu.ruc.domain.Feature;
-import cn.edu.ruc.domain.Task;
 import cn.edu.ruc.model.Assess;
 import cn.edu.ruc.model.Dropdown;
 import cn.edu.ruc.model.Profile;
@@ -42,22 +40,6 @@ public class SearchServiceImp implements SearchService {
 		return query;
 	}
 
-	@Override
-	public Profile getProfile(String queryEntityString) {
-		long time = System.currentTimeMillis();
-
-		Entity queryEntity = Parser.encodeSource(queryEntityString);
-
-		Parser.decodeDescription(queryEntity);
-
-		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity), true);
-
-		Profile profile = new Profile(queryEntity, relevantFeatureListList);
-
-		DataUtil.getLogManager().appendInfo("\nQuery entity string:\n\t" + queryEntityString + "\nProfile:" + profile + "\nTime: " + (System.currentTimeMillis() - time) / 1000 + "s");
-
-		return profile;
-	}
 
 	@Override
 	public Assess getAssess() {

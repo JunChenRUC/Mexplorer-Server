@@ -27,13 +27,6 @@ public class SearchController {
 		return searchService.getDropdown(keywords);
 	}
 
-	//localhost:8080/controller/getProfile?queryEntity=Forrest Gump
-	@ResponseBody
-	@RequestMapping(value = "getProfile", method = RequestMethod.GET)
-	public Profile getProfile(@RequestParam("queryEntity") String queryEntityString){
-		return searchService.getProfile(queryEntityString);
-	}
-
 	//localhost:8080/controller/getQuery?queryEntities=Forrest Gump&queryFeatures=Tom Hanks%23%23Actor%23%23-1
 	//a feature is composed of an entity, a relation and a direction via ## (should be transferred to %23%23)
 	@ResponseBody

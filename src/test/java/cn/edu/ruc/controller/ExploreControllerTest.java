@@ -32,11 +32,11 @@ public class ExploreControllerTest {
     @Parameterized.Parameter(0)
     public String keywords;
     @Parameterized.Parameter(1)
-    public String entityString;
+    public String queryEntityString;
     @Parameterized.Parameter(2)
-    public List<String> entityStringList;
+    public List<String> queryEntityStringList;
     @Parameterized.Parameter(3)
-    public List<String> featureStringList;
+    public List<String> queryFeatureStringList;
     @Parameterized.Parameter(4)
     public int versionId;
 
@@ -53,6 +53,8 @@ public class ExploreControllerTest {
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 2},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 3},
                 {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Best Film, London Film Festival winners##Subject##-1"}), 3}*/
+                {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Mystery##Genre##-1"}), 1},
+                {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"War##Genre##-1", "Romance##Genre##-1"}), 1},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Luc Besson##Director##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Jackie Chan##Actor##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Comedy##Genre##-1"}), 3},
@@ -106,7 +108,7 @@ public class ExploreControllerTest {
     public void testGetQuery() throws Exception {
         System.out.println("@Test(getQuery(@RequestParam(required = false, value = \"entities\") String[] entityStringList, @RequestParam(required = false, value = \"features\") String[] featureStringList))");
 
-        searchService.getQuery(entityStringList, featureStringList);
+        searchService.getQuery(queryEntityStringList, queryFeatureStringList);
     }
 
     /**
@@ -118,7 +120,7 @@ public class ExploreControllerTest {
     public void testGetProfile() throws Exception {
         System.out.println("@Test(getProfile(@RequestParam(\"entity\") String entityString))");
 
-        searchService.getProfile(entityString);
+        exploreService.getProfile(queryEntityString, queryFeatureStringList);
     }
 
 
@@ -131,6 +133,6 @@ public class ExploreControllerTest {
     public void testGetResult() throws Exception {
         System.out.println("@Test(getResult(@RequestParam(required = false, value = \"entities\") String[] entityStringList, @RequestParam(required = false, value = \"features\") String[] featureStringList))");
 
-        exploreService.getResult(versionId, entityStringList, featureStringList);
+        exploreService.getResult(versionId, queryEntityStringList, queryFeatureStringList);
     }
 } 

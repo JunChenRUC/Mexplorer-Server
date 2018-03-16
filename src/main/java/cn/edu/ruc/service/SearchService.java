@@ -16,9 +16,6 @@ public interface SearchService {
 	//get query
 	Query getQuery(List<String> entityStringList, List<String> featureStringList);
 
-	//get profile of entity
-	Profile getProfile(String queryEntityString);
-
 	//get assess
 	Assess getAssess();
 

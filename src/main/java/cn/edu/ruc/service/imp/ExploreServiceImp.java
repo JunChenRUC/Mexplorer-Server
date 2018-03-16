@@ -34,22 +34,39 @@ public class ExploreServiceImp implements ExploreService {
 		}
 		else if(versionId == 2) {
 			entityList = Ranker.getRelevantEntityList(queryEntityList, queryFeatureList, false);
-			leftFeatureListList = Ranker.getRelevantFeatureListList(entityList, true);
+			leftFeatureListList = Ranker.getRelevantFeatureListList(entityList, queryFeatureList, true);
 		}
 		else if(versionId == 3) {
 			entityList = Ranker.getRelevantEntityList(queryEntityList, queryFeatureList, false);
-			leftFeatureListList = Ranker.getRelevantFeatureListList(entityList, true);
-			rightFeatureListList = Ranker.getRelevantFeatureListList(entityList, false);
+			leftFeatureListList = Ranker.getRelevantFeatureListList(entityList, queryFeatureList, true);
+			rightFeatureListList = Ranker.getRelevantFeatureListList(entityList, queryFeatureList, false);
 		}
 
 		Query query = new Query(queryEntityList, queryFeatureList);
 
-		Profile profile = new Profile(entityList.get(0), Ranker.getRelevantFeatureListList(Arrays.asList(entityList.get(0)), true));
+		Profile profile = new Profile(entityList.get(0), Ranker.getRelevantFeatureListList(Arrays.asList(entityList.get(0)), queryFeatureList,true));
 
 		Result result = new Result(query, entityList, profile, leftFeatureListList, rightFeatureListList);
 
 		DataUtil.getLogManager().appendInfo("\nResult: " + result + "\nTime: " + (System.currentTimeMillis() - time) / 1000 + "s!");
 
 		return result;
+	}
+
+	@Override
+	public Profile getProfile(String queryEntityString, List<String> queryFeatureStringList) {
+		long time = System.currentTimeMillis();
+
+		Entity queryEntity = Parser.encodeSource(queryEntityString);
+		List<Feature> queryFeatureList = Parser.encodeFeatureList(queryFeatureStringList);
+
+		Parser.decodeDescription(queryEntity);
+		List<List<Feature>> relevantFeatureListList = Ranker.getRelevantFeatureListList(Arrays.asList(queryEntity), queryFeatureList, true);
+
+		Profile profile = new Profile(queryEntity, relevantFeatureListList);
+
+		DataUtil.getLogManager().appendInfo("\nQuery entity string:\n\t" + queryEntityString + "\nProfile:" + profile + "\nTime: " + (System.currentTimeMillis() - time) / 1000 + "s");
+
+		return profile;
 	}
 }

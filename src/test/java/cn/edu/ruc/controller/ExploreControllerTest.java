@@ -60,7 +60,7 @@ public class ExploreControllerTest {
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Comedy##Genre##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"War##Genre##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 3},
-                {"", "", Arrays.asList(new String[]{"The Protector (1985 film)"}), Arrays.asList(new String[]{"Action##Genre##-1"}), 3}
+                {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Leonardo DiCaprio##Actor##-1"}), 3}
         });
     }
 

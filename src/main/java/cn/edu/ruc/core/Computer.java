@@ -15,7 +15,7 @@ public class Computer {
             sum += Math.pow(entityVector1[i] - entityVector2[i], 2);
         }
 
-        return (3 - Math.sqrt(sum))/ 3;
+        return (2 - Math.sqrt(sum))/ 2;
     }
 
     public static double getEmbeddingsScore(int entityId1, int relationId, int direction, int entityId2){

@@ -43,16 +43,16 @@ public class ExploreControllerTest {
     @Parameterized.Parameters
     public static List<Object> getParameters() {
         return Arrays.asList(new Object[][]{
-                /*{"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 1},
+                {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 1},
                 {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 2},
                 {"forrest", "Forrest Gump", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 3},
-                {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1"}), 1},
+                {"Apollo", "Hachi: A Dog's Tale", Arrays.asList(new String[]{"Hachi: A Dog's Tale"}), Arrays.asList(new String[]{}), 1},
                 {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1"}), 2},
                 {"Apollo", "Apollo 13 (film)", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Hollywood##Subject##-1"}), 3},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 1},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 2},
                 {"Tom Hanks", "JFK (film)", Arrays.asList(new String[]{"JFK (film)"}), Arrays.asList(new String[]{"Tom Hanks##Actor##-1"}), 3},
-                {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Best Film, London Film Festival winners##Subject##-1"}), 3}*/
+                {"", "Tom Hanks", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Category:Best Film, London Film Festival winners##Subject##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Mystery##Genre##-1"}), 1},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"War##Genre##-1", "Romance##Genre##-1"}), 1},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Luc Besson##Director##-1"}), 3},
@@ -60,7 +60,7 @@ public class ExploreControllerTest {
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"Comedy##Genre##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{}), Arrays.asList(new String[]{"War##Genre##-1"}), 3},
                 {"", "", Arrays.asList(new String[]{"Forrest Gump"}), Arrays.asList(new String[]{}), 3},
-                {"", "", Arrays.asList(new String[]{"Rain Man"}), Arrays.asList(new String[]{}), 3}
+                {"", "", Arrays.asList(new String[]{"The Protector (1985 film)"}), Arrays.asList(new String[]{"Action##Genre##-1"}), 3}
         });
     }
 

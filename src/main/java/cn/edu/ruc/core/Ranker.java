@@ -41,7 +41,7 @@ public class Ranker {
 							.map(queryFeature -> Computer.getEmbeddingsScore(sourceId, queryFeature.getRelation().getId(), queryFeature.getRelation().getDirection(), queryFeature.getEntity().getId()) * queryFeature.getScore())
 							.reduce(0.0, (s1, s2) -> (s1 + s2));
 
-					return new Entity(sourceId, score / (queryEntityList.size() + queryFeatureList.size()) + (isFilter || !sourceId2sizeMap.containsKey(sourceId) ? 0 : sourceId2sizeMap.get(sourceId)) * 0.05);
+					return new Entity(sourceId, score / (queryEntityList.size() + queryFeatureList.size()) + (isFilter || !sourceId2sizeMap.containsKey(sourceId) ? 0 : sourceId2sizeMap.get(sourceId)) * 0.01);
 				})
 				.collect(Collectors.toList()), DataUtil.Output_Entity_Size);
 

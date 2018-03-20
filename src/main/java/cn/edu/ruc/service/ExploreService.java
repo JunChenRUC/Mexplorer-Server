@@ -12,5 +12,4 @@ public interface ExploreService {
 
 	//get profile of entity
 	Profile getProfile(String queryEntityString, List<String> queryFeatureStringList);
-
 }

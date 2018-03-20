@@ -65,7 +65,7 @@ public class ExploreServiceImp implements ExploreService {
 
 		Profile profile = new Profile(queryEntity, relevantFeatureListList);
 
-		DataUtil.getLogManager().appendInfo("\nQuery entity string:\n\t" + queryEntityString + "\nProfile:" + profile + "\nTime: " + (System.currentTimeMillis() - time) / 1000 + "s");
+		DataUtil.getLogManager().appendInfo("\nQuery entity string:\n\t" + queryEntityString + "\nQuery feature string:\n\t" + queryFeatureStringList + "\nProfile:" + profile + "\nTime: " + (System.currentTimeMillis() - time) / 1000 + "s");
 
 		return profile;
 	}
